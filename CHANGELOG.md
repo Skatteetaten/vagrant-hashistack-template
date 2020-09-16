@@ -1,13 +1,10 @@
 # Changelog
 
-## [0.0.1 UNRELEASED]
-
+## [0.1.0]
 
 ### Changed
 
-
-### Added
-
+- update http_timeout #1
 
 ### Fixed
 
