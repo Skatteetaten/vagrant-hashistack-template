@@ -5,6 +5,7 @@
 
 ### Changed
 
+- trigger tests for template_example #12
 
 ### Added
 

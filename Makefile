@@ -29,7 +29,7 @@ else
 	SSL_CERT_FILE=${SSL_CERT_FILE} CURL_CA_BUNDLE=${CURL_CA_BUNDLE} CUSTOM_CA=${CUSTOM_CA} ANSIBLE_ARGS='--extra-vars "local_test=true"' vagrant up --provision
 endif
 
-test: clean up
+test: clean template_example
 
 template_example: custom_ca
 ifdef CI # CI is set in Github Actions
