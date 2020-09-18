@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added command that formats/prettify all `.tf`-files in directory #21
 
 ### Fixed
 
