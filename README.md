@@ -289,6 +289,25 @@ to the bottom of your [Vagrantfile](Vagrantfile), and change `vb.memory` and `vb
 
 > :bulb: The defaults can be found in [Vagrantfile.default](Vagrantfile.default).
 
+## Getting Started
+
+### Goals of This Guide
+The end goal of this guide is to create a terraform module that can be used within a hashistack ecosystem. Before we arrive at this end goal this guide will show you how you can use this template and the [vagrant-hashistack](addlink) box to both develop and test the terraform module.
+
+### Building Docker Image
+> :warning: This section is only relevant if you want to build your own docker image.
+
+Most of the terraform modules will deploy one or more docker-containers on Nomad. In conjuction with this many will want to create their own docker images. The template supplies a [docker/](docker/) folder for this.
+
+To build your own docker image start with adding a file named [`Dockerfile`](https://docs.docker.com/engine/reference/builder/) to [docker/](docker/). You can then test and develop this image like you would with any other `Dockerfile`.
+
+### Get Image Into Box
+> :warning: This section is only relevant if you have built your own image
+
+After successfully building a docker image we want this to be available within our vagrant-box.
+### Deploying Container With Nomad
+### Creating the Terraform Module
+### Using Terraform Module With Ansible
 
 ## Usage
 ### Commands
