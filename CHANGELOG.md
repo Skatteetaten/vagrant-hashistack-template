@@ -12,7 +12,8 @@
 
 - ~~Added command that formats/prettify all `.tf`-files in directory #21~~
 - Added check for consul and terraform binary in the `Makefile` #20
-- Added pre-commit command that use local linter and formatts/prettyfies all `.tf` files #24
+- Added `make pre-commit` command that use local linter and formatts/prettyfies all `.tf` files #24
+- Squashed `make linter` and `make prettify` into `make pre-commit`
 
 ### Fixed
 
