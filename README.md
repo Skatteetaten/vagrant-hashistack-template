@@ -292,7 +292,11 @@ to the bottom of your [Vagrantfile](Vagrantfile), and change `vb.memory` and `vb
 ## Getting Started
 
 ### Goals of This Guide
-The end goal of this guide is to create a terraform module that can be used within a hashistack ecosystem. Before we arrive at this end goal this guide will show you how you can use this template and the [vagrant-hashistack](addlink) box to both develop and test the terraform module.
+The end goal of this guide is to create a terraform module that can be used within a [hashistack ecosystem]().
+
+> :bulb: **Hashistack**, in current repository context, is a set of software products by [HashiCorp](https://www.hashicorp.com/).
+
+The finished terraform module should work seamlessly with this hashistack, and to achieve that we need to develop and test the module within that ecosystem. This requires a full setup of Vault, Consul, Nomad, Terraform, and many other technologies. Not just that, they also need to be configured and integrated with each other. None of this is an easy feat, and would require a lot of work from every user that wants to effectively develop modules. To solve this problem we use [Vagrant](https://www.vagrantup.com/). Vagrant is a technology that allows us to easily set up a virtual machines based on boxes that are created by code that we write. In [vagrant-hashistack](https://github.com/fredrikhgrelland/vagrant-hashistack/) we have a set of code that produces the vagrant-box called `fredrikhgrelland/hashistack` which is availabe on [Vagrant cloud](https://vagrantcloud.com/fredrikhgrelland/hashistack). When this vagrant-box is  Before we arrive at this end goal this guide will show you how you can use this template and the [vagrant-hashistack](addlink) box to both develop and test the terraform module.
 
 ### Building Docker Image
 > :warning: This section is only relevant if you want to build your own docker image.
