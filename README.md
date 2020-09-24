@@ -233,7 +233,7 @@ When ACLs are enabled in Nomad the bootstrap token will be available in vault un
 ##### Enterprise - Namespaces
 
 [Consul namespaces](https://www.consul.io/docs/enterprise/namespaces) feature is available in enterprise version only.
-The next switches will enable [consul_namespaces_test.yml](https://github.com/fredrikhgrelland/vagrant-hashistack/blob/master/ansible/tests/enterprise/consul_namespaces_test.yml)
+The switches below will enable [consul_namespaces_test.yml](https://github.com/fredrikhgrelland/vagrant-hashistack/blob/master/ansible/tests/enterprise/consul_namespaces_test.yml)
 
 ```text
 consul_enterprise=true
