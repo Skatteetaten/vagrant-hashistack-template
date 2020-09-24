@@ -243,7 +243,7 @@ consul_acl_default_policy=deny
 
 Consul will come up with two additional namespaces ["team1", "team2"] and *admin token for these namespaces.
 
-`NB` Admin tokens have scope=global and policy=namespace-management.
+> :warning: Admin tokens have scope=global and policy=namespace-management.
 
 References:
 - [Consul namespaces documentation](https://www.consul.io/docs/enterprise/namespaces)
