@@ -294,16 +294,32 @@ to the bottom of your [Vagrantfile](Vagrantfile), and change `vb.memory` and `vb
 ### Goals of This Guide
 The end goal of this guide is to create a terraform module that can be used within a [hashistack ecosystem]().
 
-> :bulb: **Hashistack**, in current repository context, is a set of software products by [HashiCorp](https://www.hashicorp.com/).
+> :bulb: **Hashistack**, in current repository context, is a set of software products by [HashiCorp](https://www.hashicorp.com/), enabling us to create a dynamic and robust service-mesh.
 
-The finished terraform module should work seamlessly with this hashistack, and to achieve that we need to develop and test the module within that ecosystem. This requires a full setup of Vault, Consul, Nomad, Terraform, and many other technologies. Not just that, they also need to be configured and integrated with each other. None of this is an easy feat, and would require a lot of work from every user that wants to effectively develop modules. To solve this problem we use [Vagrant](https://www.vagrantup.com/). Vagrant is a technology that allows us to easily set up a virtual machines based on boxes that are created by code that we write. In [vagrant-hashistack](https://github.com/fredrikhgrelland/vagrant-hashistack/) we have a set of code that produces the vagrant-box called `fredrikhgrelland/hashistack` which is availabe on [Vagrant cloud](https://vagrantcloud.com/fredrikhgrelland/hashistack). When this vagrant-box is  Before we arrive at this end goal this guide will show you how you can use this template and the [vagrant-hashistack](addlink) box to both develop and test the terraform module.
+The finished terraform module should work seamlessly with this hashistack, and to achieve that we need to develop and test the module within that ecosystem. This requires a full setup of Vault, Consul, Nomad, Terraform, and many other technologies. Not just that, they also need to be configured and integrated with each other. This is not an easy feat and would require a lot of work from every user that wants to effectively develop modules. To solve this problem we use [Vagrant](https://www.vagrantup.com/). Vagrant is a technology that allows us to easily set up virtual machines based on boxes that are created by code that we write. In [vagrant-hashistack](https://github.com/fredrikhgrelland/vagrant-hashistack/) we have a set of code that produces the vagrant-box called `fredrikhgrelland/hashistack` which is availabe on [Vagrant cloud](https://vagrantcloud.com/fredrikhgrelland/hashistack). When this box is provisioned it'll start up a fully integrated hashistack with Consul, Nomad, Vault, and more (see [services](todo)). The point of this box is to havbe a place to test and develop any terraform module or other services that should be put into an ecosystem like the hashistack. In our case we have created this template as a quick way to create the terraform module itself, then import that into the box and test it there.
+
+When creating a terraform module we imagine [howmanystepsittakes] steps you should go through before you've got a complete terraform module. These include (but might not be limited to)
+- Building a docker image
+- Creating ansible code to build and import it into the box
+- Creating a nomad job that uses this image and deploying it
+- Creating a terraform module that takes this nomad job and deploys it
+- Adding dynamic variables to terraform and nomad
+- Creating ansible code that uses this terraform module inside the box
+
+All of these steps are meant to take us to our end-goal which is a functioning terraform module, while showing you the ropes along the way.
+
+### How to start a vagrant-hashistack box
+To start a vagrant-box you can run `make up`. This will run the command `SSL_CERT_FILE=${SSL_CERT_FILE} CURL_CA_BUNDLE=${CURL_CA_BUNDLE} CUSTOM_CA=${CUSTOM_CA} ANSIBLE_ARGS='--extra-vars "local_test=true"' vagrant up --provision`. The first two arguments add [`CURL_CA_BUNDLE`](https://www.vagrantup.com/docs/other/environmental-variables#curl_ca_bundle) and [`SSL_CERT_FILE`](https://www.vagrantup.com/docs/other/environmental-variables#ssl_cert_file) is used by Vagrant, while `CUSTOM_CA` is used to specify where ca-certificates are located (see [Makefile](Makefile)).
 
 ### Building Docker Image
 > :warning: This section is only relevant if you want to build your own docker image.
 
-Most of the terraform modules will deploy one or more docker-containers on Nomad. In conjuction with this many will want to create their own docker images. The template supplies a [docker/](docker/) folder for this.
+Most of the terraform modules will deploy one or more docker-containers on Nomad. In conjunction with this many will want to create their own docker images. The template supplies a [docker/](docker/) folder for this.
 
-To build your own docker image start with adding a file named [`Dockerfile`](https://docs.docker.com/engine/reference/builder/) to [docker/](docker/). You can then test and develop this image like you would with any other `Dockerfile`.
+To build your own docker image start by adding a file named [`Dockerfile`](https://docs.docker.com/engine/reference/builder/) to [docker/](docker/). You can then test and develop this image like you would with any other `Dockerfile`. Example in [template_example]().
+
+### Importing docker image into box
+When the box is provisioned
 
 ### Get Image Into Box
 > :warning: This section is only relevant if you have built your own image
