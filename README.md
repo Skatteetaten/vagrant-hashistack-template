@@ -296,20 +296,31 @@ The end goal of this guide is to create a terraform module that can be used with
 
 > :bulb: **Hashistack**, in current repository context, is a set of software products by [HashiCorp](https://www.hashicorp.com/).
 
-The finished terraform module should work seamlessly with this hashistack, and to achieve that we need to develop and test the module within that ecosystem. This requires a full setup of Vault, Consul, Nomad, Terraform, and many other technologies. Not just that, they also need to be configured and integrated with each other. None of this is an easy feat, and would require a lot of work from every user that wants to effectively develop modules. To solve this problem we use [Vagrant](https://www.vagrantup.com/). Vagrant is a technology that allows us to easily set up a virtual machines based on boxes that are created by code that we write. In [vagrant-hashistack](https://github.com/fredrikhgrelland/vagrant-hashistack/) we have a set of code that produces the vagrant-box called `fredrikhgrelland/hashistack` which is availabe on [Vagrant cloud](https://vagrantcloud.com/fredrikhgrelland/hashistack). When this vagrant-box is  Before we arrive at this end goal this guide will show you how you can use this template and the [vagrant-hashistack](addlink) box to both develop and test the terraform module.
+The finished terraform module should work seamlessly with this hashistack, and to achieve that we need to develop and test the module within that ecosystem. This requires a full setup of Vault, Consul, Nomad, Terraform, and many other technologies. Not just that, they also need to be configured and integrated with each other. None of this is an easy feat, and would require a lot of work from every user that wants to effectively develop modules. To solve this problem we use [Vagrant](https://www.vagrantup.com/). Vagrant is a technology that allows us to easily set up a virtual machines based on boxes that are created by code that we write. In [vagrant-hashistack](https://github.com/fredrikhgrelland/vagrant-hashistack/) we have a set of code that produces the vagrant-box called `fredrikhgrelland/hashistack` which is availabe on [Vagrant cloud](https://vagrantcloud.com/fredrikhgrelland/hashistack). When this vagrant-box is finished setting up you will have a virtual machine with the hashistack fully set up and ready to go, specifically set up so that it is easy to develop and test terraform modules. The template you found this README in is specificully built to make it as easy and quick as possible to make the aforementioned modules, and develop and test them within the vagrant-hashistack box. This guide aims to show you how to use this terraform modules. While building a terraform module using this template there are several steps you might want to take, listed below. The order is not random, but if you personally want to do it in another order, that is completely fine, and up to you. The most important part of this tutorial is that you get an introduction to what this template is, and how to use it. The steps we are going to walk through are as follows:
+
+- Building a docker image
+- Creating a nomad job that uses this image
+- Expanding nomad job so that it uses vault
+- Creating the terraform module
+- making the nomad job more dynamic
+
+### Using ansible
+When working with this box we will use a technology called [ansible](https://www.ansible.com/). In short, ansible is a software that logs onto a computer like a normal user, and performs tasks defined in an ansible playbook (see example in [template_example/dev/ansible/playbook.yml](template_example/dev/ansible/playbook.yml). We will mostly be using this to interact with our virtual machine. In our case ALL playbooks put inside [dev/ansible/](dev/ansible/) will be run every time we start the box, and we will utilise this throughout the guide.
 
 ### Building Docker Image
 > :warning: This section is only relevant if you want to build your own docker image.
 
-Most of the terraform modules will deploy one or more docker-containers on Nomad. In conjuction with this many will want to create their own docker images. The template supplies a [docker/](docker/) folder for this.
+ Most of the terraform modules will deploy one or more docker-containers on Nomad. Many will want to create their own docker images for this. The template supplies a [docker/](docker/) folder to do this.
 
-To build your own docker image start with adding a file named [`Dockerfile`](https://docs.docker.com/engine/reference/builder/) to [docker/](docker/). You can then test and develop this image like you would with any other `Dockerfile`.
+To build your own docker image start by adding a file named [`Dockerfile`](https://docs.docker.com/engine/reference/builder/) to [docker/](docker/). You can then test and develop this image like you would with any other `Dockerfile`. Its worthwhile to try and build this like any other docker-image by running `docker build ./docker` to see that everything is working properly, but as soon as we know that we will use ansible code to build the image. You can jump to the next section to see how that is done.
 
-### Get Image Into Box
-> :warning: This section is only relevant if you have built your own image
-
-After successfully building a docker image we want this to be available within our vagrant-box.
 ### Deploying Container With Nomad
+#### Making image available to Nomad
+After successfully building a docker image we want to create a nomad-job that takes this image and deploys it and registers it with consul, so that we have a running service. In the end this is what we want our terraform module to do, but well first do this manually to make sure everything is working before we try and wrap a terraform module around it. The image we built in our first step is now available as a image on our local machine, but our vagrant box does not have access to that. For all intents and purposes our local mahine and the vagrant box are two different machines. In other words we need to somehow take our docker image, and make that available inside our box (because that is where the nomad service is running). To be able to transfer files from our local machine to the vagrant box we have set up a S3 storage solution called MinIO, that is available from our local machine at `http://10.0.3.10:9000`. You can upload files from the UI in your browser, or we have also set it up so that all files put in the same directory as this README will be copied into MinIO. [This section](#pushing-resources-to-minio-with-ansible-docker-image) shows how we can use ansible code to first create a tmp folder, then build and archive our docker image in that tmp folder. Because the tmp folder is in the same directory as this readme itll automatically now be available in MinIO. Lucky for us, nomad then has a way to extract images from MinIO and use them.
+
+#### Creating a nomad job
+Next step is to create the nomad job that deploys our image. This guide will not focus on how to make a nomad job, but a full example can be found at [template_example/conf/nomad/coundash.hcl](template_example/conf/nomad/coundash.hcl). To see how you specifically can use the docker image we creating in the previous step, see [this section](#fetching-resources-from-minio-with-nomad-docker-image). When the nomad job has been created we can try and run the job.
+
 ### Creating the Terraform Module
 ### Using Terraform Module With Ansible
 
