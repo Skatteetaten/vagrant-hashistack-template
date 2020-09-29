@@ -335,7 +335,15 @@ Just to sketch out what we want: the module itself should contain the resources 
 In our case the only thing our main.tf should contain is a resource that takes our nomad-job file and deploys it to nomad. To be able to use a resource that does this, we need to supply a [nomad provider](), but we do not want to supply that with the module itself. We would rather that the place that is importing the module supplies this. When done this way it ensures that the module is not tied down to one single nomad-provider, but can be used in different configurations with different nomad-providers.
 
 #### variables.tf
-In this file you define any variables you would want to be input variables to your module. An example could be "Name of your postgres database" if we are talking about a module that provisions a postgres database, or
+In this file you define any variables you would want to be input variables to your module. An example could be "Name of your postgres database" if we are talking about a module that provisions a postgres database, or "Number of servers to provision" if you are provisioning a cluster of something. A  variable is defined like below
+
+```terraform
+variable "service_name" {
+  type        = string
+  description = "Minio service name"
+  default     = "minio"
+}
+```
 
 ### Using Terraform Module With Ansible
 
