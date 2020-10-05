@@ -130,7 +130,7 @@ The command, will install:
 - [VirtualBox](https://www.virtualbox.org/)
 - [Packer](https://www.packer.io/)
 - [Vagrant](https://www.vagrantup.com/) with additional plugins
-- [Additional software dependent on the OS (Linux, MacOS)](../install/Makefile)
+- [Additional software dependent on the OS (Linux, MacOS)](https://github.com/fredrikhgrelland/vagrant-hashistack/blob/master/install/Makefile)
 
 ### Packages that needs to be pre-installed
 
@@ -178,7 +178,7 @@ _user_ - Provided by the user to alter the box or template in some way
 |3 |`/vagrant/.env_override`|[ _system_ ]| variables are overridden for test purposes |
 |4 |`/vagrant/dev/vagrant/conf/pre_ansible.sh`|[ _user_ ]| script running before ansible bootstrap procedure, [details](dev/vagrant/conf/pre_bootstrap/README.md) |
 |5 |`/vagrant/dev/vagrant/conf/pre_bootstrap/*.yml`|[ _user_ ]| pre bootstrap tasks, running before hashistack software starts, [details](dev/vagrant/conf/README.md) |
-|6 |`/etc/ansible/bootstrap.yml`|[ _box_ ]| verify ansible variables and software configuration, run hashistack software and MinIO, & verify that it started correctly,  [link](../ansible/bootstrap.yml) |
+|6 |`/etc/ansible/bootstrap.yml`|[ _box_ ]| verify ansible variables and software configuration, run hashistack software and MinIO, & verify that it started correctly,  [link](https://github.com/fredrikhgrelland/vagrant-hashistack/blob/master/ansible/bootstrap.yml) |
 |7 |`/vagrant/conf/post_bootstrap/*.yml`|[ _user_ ]| poststart scripts, running after hashistack software has started, [details](dev/vagrant/conf/pre_bootstrap/README.md) |
 |8 |`/vagrant/dev/conf/post_ansible.sh`|[ _user_ ]| script running after ansible bootstrap procedure, [details](dev/vagrant/conf/README.md) |
 |9 |`/vagrant/ansible/*.yml`|[ _user_ ]| ansible tasks included in playbook, see [Pre-packaged Configuration Switches](#pre-packaged-configuration-switches) for details |
@@ -199,7 +199,7 @@ In addition to ansible playbooks, you can also add bash-scripts that will be run
 The box comes [with a set of configuration switches controlled by env variables](https://github.com/fredrikhgrelland/vagrant-hashistack#configuration) to simplify testing of different scenarios and enable staged development efforts.
 To change any of these values from their defaults, you may add the environment variable to [.env](dev/.env).
 
-NB: All lowercase variables will automatically get a corresponding  `TF_VAR_` prepended variant for use directly in terraform. [Script](../.github/action/create-env.py)
+NB: All lowercase variables will automatically get a corresponding  `TF_VAR_` prepended variant for use directly in terraform. [Script](/.github/action/create-env.py)
 
 #### Enterprise vs Open Source Software (OSS)
 To use enterprise versions of the hashistack components set the software's corresponding Enterprise-variable to `true` (see below).
@@ -239,7 +239,7 @@ When ACLs are enabled in Nomad the bootstrap token will be available in vault un
 ##### Consul Secrets Engine
 
 If `consul_acl_default_policy` has value `deny`, it will also enable [consul secrets engine](https://www.vaultproject.io/docs/secrets/consul) in vault.  
-Ansible will provision additional custom roles (admin-team, dev-team), [policies](../ansible/templates/consul-policies) and tokens for test purpose with different access level.
+Ansible will provision additional custom roles (admin-team, dev-team), [policies](https://github.com/fredrikhgrelland/vagrant-hashistack/tree/master/ansible/templates/consul-policies) and tokens for test purpose with different access level.
 
 How to generate token:
 ```text
@@ -310,14 +310,14 @@ The finished terraform module should work seamlessly with this hashistack, and t
 When a vagrant box is set up the machine is available at the IP 10.0.3.10, and Nomad, Vault, and Consul all listen to their default ports, which are `4646`, `8200`, and `8500` respectively. In other words, you can reach nomad on `10.0.3.10:4646`, vault on `10.0.3.10:8200` and consul on `10.0.3.10:8500`. For convenience sake these services have been port forwarded, meaning they are also available at `localhost`, on the same ports; Nomad then becomes `localhost:4646`, and so on. All of these have their own CLI-tools used to interact with the servers that are running, and they default to connect to localhost,  and on the ports that we have set up. This means you can download any of the binaries, and they will work right out of the box, and be connected to the services running inside the vagrant box. Refer to [this section](#iteration-of-the-development-process) to see examples on how to use this.
 
 ### Using ansible
-When working with this box we will use a technology called [ansible](https://www.ansible.com/). In short, ansible is a software that logs onto a computer like a normal user, and performs tasks defined in an ansible playbook (see example in [template_example/dev/ansible/playbook.yml](template_example/dev/ansible/playbook.yml). We will mostly be using this to interact with our virtual machine. In our case ALL playbooks put inside [dev/ansible/](dev/ansible/) will be run every time we start the box, and we will utilise this throughout the guide.
+When working with this box we will use a technology called [ansible](https://www.ansible.com/). In short, ansible is a software that logs onto a computer like a normal user, and performs tasks defined in an ansible playbook (see example in [template_example/dev/ansible/playbook.yml](template_example/dev/ansible/playbook.yml). We will mostly be using this to interact with our virtual machine. In our case ALL playbooks put inside [dev/ansible/](./dev/ansible/) will be run every time we start the box, and we will utilise this throughout the guide.
 
 ### Building Docker Image
 > :warning: This section is only relevant if you want to build your own docker image.
 
- Most of the terraform modules will deploy one or more docker-containers on Nomad. Many will want to create their own docker images for this. The template supplies a [docker/](docker/) folder to do this.
+ Most of the terraform modules will deploy one or more docker-containers on Nomad. Many will want to create their own docker images for this. The template supplies a [docker/](/docker/) folder to do this.
 
-To build your own docker image start by adding a file named [`Dockerfile`](https://docs.docker.com/engine/reference/builder/) to [docker/](docker/). You can then test and develop this image like you would with any other `Dockerfile`. Its worthwhile to try and build this like any other docker-image by running `docker build ./docker` to see that everything is working properly, but as soon as we know that we will use ansible code to build the image. You can jump to the next section to see how that is done.
+To build your own docker image start by adding a file named [`Dockerfile`](https://docs.docker.com/engine/reference/builder/) to [docker/](/docker/). You can then test and develop this image like you would with any other `Dockerfile`. Its worthwhile to try and build this like any other docker-image by running `docker build ./docker` to see that everything is working properly, but as soon as we know that we will use ansible code to build the image. You can jump to the next section to see how that is done.
 
 ### Deploying Container With Nomad
 #### Making image available to Nomad
@@ -327,23 +327,68 @@ After successfully building the docker image we want to create a nomad-job that 
 Next step is to create the nomad job that deploys our image. This guide will not focus on how to make a nomad job, but a full example can be found at [template_example/conf/nomad/coundash.hcl](template_example/conf/nomad/coundash.hcl). To see how you can use the docker image we created in the previous step, see [this section](#fetching-resources-from-minio-with-nomad-docker-image). When the nomad job has been created we can try and run it. You can either log on the machine with vagrant ssh or run it locally from your computer with nomad job run nameofhcl.hcl. When you know that your container and nomad job is working as expected its time to wrap a terraform module around this, so that it is possible to import and run the terraform module, which will then start the whole service (which in this case is basically starting deploying the nomad job).
 
 ### Creating the Terraform Module
-A terraform module consists of a minimum of three files, main.tf, variables.tf, outputs.tf. main.tf contains the providers and resources used, variables.tf contains all variables used, and outputs.tf defines any output variables (if relevant). At this point we will create the terraform module itself, then we will use ansible to import it into our box, and try and use it in our hashistack ecosystem.
+ A terraform module consists of a minimum of three files, main.tf, variables.tf, outputs.tf. main.tf contains the
+  providers and resources used, variables.tf contains all variables used, and outputs.tf defines any output variables (if relevant). At this point we will create the terraform module itself, then we will use ansible to import it into our box, and try and use it in our hashistack ecosystem.
 
 Just to sketch out what we want: the module itself should contain the resources that sets up a job in nomad. See [example](template_example/main.tf). We should then be able to write some terraform code that then imports this module and uses it.
 
 #### main.tf
-In our case the only thing our main.tf should contain is a resource that takes our nomad-job file and deploys it to nomad. To be able to use a resource that does this, we need to supply a [nomad provider](), but we do not want to supply that with the module itself. We would rather that the place that is importing the module supplies this. When done this way it ensures that the module is not tied down to one single nomad-provider, but can be used in different configurations with different nomad-providers.
+In our case the only thing our main.tf should contain is a resource that takes our nomad-job file and deploys it to
+ nomad. To be able to use a resource that does this, we need to supply a [nomad provider](), but we do not want to
+  supply that with the module itself. We would rather that the place that is importing the module supplies this. When
+   done this way it ensures that the module is not tied down to one single nomad-provider, but can be used in
+    different configurations with different nomad-providers. Below is an example of the commonly used resource `nomad
+    -job`, that would reside within `main.tf`.
+    
+```hcl-terraform
+resource "nomad_job" "countdash" {
+  jobspec = file("${path.module}/conf/nomad/countdash.hcl")
+  detach  = false
+}
+```
 
 #### variables.tf
-In this file you define any variables you would want to be input variables to your module. An example could be "Name of your postgres database" if we are talking about a module that provisions a postgres database, or "Number of servers to provision" if you are provisioning a cluster of something. A  variable is defined like below
+In this file you define any variables you would want to be input variables to your module. An example could be "Name of your postgres database" if we are talking about a module that provisions a postgres database, or "Number of servers to provision" if you are provisioning a cluster of something. A variable is defined like below
 
-```terraform
+```hcl-terraform
 variable "service_name" {
   type        = string
   description = "Minio service name"
   default     = "minio"
 }
 ```
+
+#### outputs.tf
+This files contains variables that will be available as outputs when you use a module. Below is first an example of
+ how to define output-variables, then an example of how to use a module, and access their output variables.
+ Defining output variables
+ ```hcl-terraform
+output "nomad_job" {
+  value       = nomad_job.countdash
+  description = "The countdash nomad job object"
+}
+```
+
+Using a module and accessing its output variables
+ ```hcl
+module "postgres" {
+  source = "github.com/fredrikhgrelland/terraform-nomad-postgres.git?ref=0.0.1"
+}
+```
+
+Using a previously defined module to accesss its output variables
+ ```hcl
+resource "some other resource"{
+  outputvariable = module.postgres.outputvariable
+}
+```
+
+Together inputs and outputs should create a very clear picture of how a module should be used. For example in our
+ hive module we have clearly defined that the module needs to have a postgres-address as an input. Looking at our
+  postgres module, it has an output that is exactly that. In other words, we might need to import and setup a
+   postgres-module before setting up our hive-module. Or, if we already have a postgres-address available, we could
+    supply that instead. The goal is to clearly define the needs of a module, while at the same time making it
+     flexible and generic (in the example of hive we give the user the ability to use any postgres they'd like).
 
 ### Using Terraform Module With Ansible
 
