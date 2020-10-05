@@ -88,4 +88,4 @@ pre-commit: check_for_docker_binary check_for_terraform_binary
 	terraform fmt -recursive && echo "\e[32mTrying to prettify all .tf files.\e[0m"
 
 proxy: check_for_docker_binary
-	docker run --rm -it --network host consul:1.8 consul connect proxy -service whatever -upstream count-dashboard:9999 -log-level debug
+	docker run --rm -it --network host consul:1.8 consul connect proxy -service countdash-dashboard -upstream count-dashboard:9999 -log-level debug
