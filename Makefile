@@ -5,7 +5,10 @@ export PATH := $(shell pwd)/tmp:$(PATH)
 .ONESHELL .PHONY: up update-box destroy-box remove-tmp clean example
 .DEFAULT_GOAL := up
 
+
+########################
 #### Pre requisites ####
+########################
 install:
 	 mkdir -p tmp;(cd tmp; git clone --depth=1 https://github.com/fredrikhgrelland/vagrant-hashistack.git; cd vagrant-hashistack; make install); rm -rf tmp/vagrant-hashistack
 
@@ -24,8 +27,10 @@ ifeq (, $(shell which docker))
 	$(error "No docker binary in $(PATH), install docker from here :\n https://docs.docker.com/get-docker/\n\n' && exit 2")
 endif
 
-#### Development ####
-# start commands
+
+########################
+##### Development ######
+########################
 dev: update-box custom_ca
 	SSL_CERT_FILE=${SSL_CERT_FILE} CURL_CA_BUNDLE=${CURL_CA_BUNDLE} CUSTOM_CA=${CUSTOM_CA} ANSIBLE_ARGS='--skip-tags "test"' vagrant up --provision
 
@@ -54,11 +59,13 @@ endif
 status:
 	vagrant global-status
 
-# clean commands
+
+########################
+#### Clean commands ####
+########################
 destroy-box:
 	vagrant destroy -f
 
-remove-tmp:
 remove-tmp:
 	rm -rf ./tmp
 	rm -rf ./.vagrant
@@ -69,10 +76,16 @@ remove-tmp:
 
 clean: destroy-box remove-tmp
 
-# helper commands
+
+########################
+### Helper commands ####
+########################
 update-box:
 	@SSL_CERT_FILE=${SSL_CERT_FILE} CURL_CA_BUNDLE=${CURL_CA_BUNDLE} vagrant box update || (echo '\n\nIf you get an SSL error you might be behind a transparent proxy. \nMore info https://github.com/fredrikhgrelland/vagrant-hashistack/blob/master/README.md#proxy\n\n' && exit 2)
 
-pre-commit: check_for_docker_binary
+pre-commit: check_for_docker_binary check_for_terraform_binary
 	docker run -e RUN_LOCAL=true -v "${PWD}:/tmp/lint/" github/super-linter
 	terraform fmt -recursive && echo "\e[32mTrying to prettify all .tf files.\e[0m"
+
+proxy: check_for_docker_binary
+	docker run --rm -it --network host consul:1.8 consul connect proxy -service whatever -upstream count-dashboard:9999 -log-level debug

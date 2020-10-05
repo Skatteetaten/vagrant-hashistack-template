@@ -328,6 +328,7 @@ There are several commands that help to run the vagrant-box:
 - `make update` downloads the newest version of the [vagrant-hashistack box](https://github.com/fredrikhgrelland/vagrant-hashistack/) from [vagrantcloud](https://vagrantcloud.com/fredrikhgrelland/hashistack).
 
 - `make template_example` runs the example in [template_example/](template_example).
+    - `make proxy` uses a consul docker image to run a [consul connect proxy](https://www.consul.io/commands/connect/proxy) that connects to the `countdash-dashboard`. The dashboard is available at [localhost:9999](http://localhost:9999/).
 
 - `make pre-commit` this is a helper command that will run the github linter locally and formatt/prettify all the `.tf` files in the directory.
 
