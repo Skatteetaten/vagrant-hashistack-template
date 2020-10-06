@@ -23,39 +23,62 @@
 </p>
 
 ## Content
-1. [Description - What & Why](#description---what--why)
-   1. [Why Does This Exist?](#why-does-this-exist)
-   2. [Services](#services)
-      1. [Port collisions](#port-collisions)
-         1. [Shut down the running machine](#option-1-shut-down-the-running-machine)
-         2. [Use the `auto_correct` feature to dynamically allocate ports](#option-2-use-the-auto_correct-feature-to-dynamically-allocate-ports)
-2. [Install Prerequisites](#install-prerequisites)
-   1. [Packages that needs to be pre-installed](#packages-that-needs-to-be-pre-installed)
-      1. [MacOS Specific](#macos-specific)
-      2. [Ubuntu Specific](#ubuntu-specific)
-3. [Configuration](#configuration)
-   1. [Startup Scheme](#startup-scheme)
-      1. [Detailed Startup Procedure](#detailed-startup-procedure)
-   2. [Pre and Post Hashistack Startup Procedure](#pre-and-post-hashistack-startup-procedure)
-      1. [Ansible Playbooks Pre and Post Hashistack Startup](#ansible-playbooks-pre-and-post-hashistack-startup)
-      2. [Bash Scripts Pre and Post Ansible Playbook](#bash-scripts-pre-and-post-ansible-playbook)
-   3. [Pre-packaged Configuration Switches](#pre-packaged-configuration-switches)
-      1. [Enterprise vs Open Source Software (OSS)](#enterprise-vs-open-source-software-oss)
-      2. [Nomad](#nomad)
-      3. [Consul](#consul)
-         1. [Enterprise - namespaces](#enterprise---namespaces)
-      4. [Vault](#vault)
-         1. [Consul Secrets Engine](#consul-secrets-engine)
-         2. [Vault PKI](#vault-pki)
-   2. [Vagrant Box Resources](#vagrant-box-resources)
-4. [Usage](#usage)
-   1. [Commands](#commands)
-   2. [MinIO](#minio)
-      1. [Pushing Resources To MinIO With Ansible (Docker image)](#pushing-resources-to-minio-with-ansible-docker-image)
-      2. [Fetching Resources From MinIO With Nomad (Docker image)](#fetching-resources-from-minio-with-nomad-docker-image)
-   3. [Iteration of the Development Process](#iteration-of-the-development-process)
-   4. [Changelog](#changelog)
-5. [Test Configuration and Execution](#test-configuration-and-execution)
+- [Content](#content)
+- [Description - What & Why](#description---what--why)
+  - [Why Does This Exist?](#why-does-this-exist)
+  - [Services](#services)
+    - [Port collisions](#port-collisions)
+      - [Option 1 Shut down the running machine](#option-1-shut-down-the-running-machine)
+      - [Option 2 Use the `auto_correct` feature to dynamically allocate ports](#option-2-use-the-auto_correct-feature-to-dynamically-allocate-ports)
+- [Install Prerequisites](#install-prerequisites)
+  - [Packages that needs to be pre-installed](#packages-that-needs-to-be-pre-installed)
+    - [MacOS Specific](#macos-specific)
+    - [Ubuntu Specific](#ubuntu-specific)
+- [Configuration](#configuration)
+  - [Startup Scheme](#startup-scheme)
+    - [Detailed Startup Procedure](#detailed-startup-procedure)
+  - [Pre and Post Hashistack Startup Procedure](#pre-and-post-hashistack-startup-procedure)
+    - [Ansible Playbooks Pre and Post Hashistack Startup](#ansible-playbooks-pre-and-post-hashistack-startup)
+    - [Bash Scripts Pre and Post Ansible Playbook](#bash-scripts-pre-and-post-ansible-playbook)
+  - [Pre-packaged Configuration Switches](#pre-packaged-configuration-switches)
+    - [Enterprise vs Open Source Software (OSS)](#enterprise-vs-open-source-software-oss)
+    - [Nomad](#nomad)
+    - [Consul](#consul)
+      - [Enterprise - Namespaces](#enterprise---namespaces)
+    - [Vault](#vault)
+      - [Consul Secrets Engine](#consul-secrets-engine)
+      - [Vault PKI](#vault-pki)
+  - [Vagrant Box Resources](#vagrant-box-resources)
+- [Getting Started](#getting-started)
+  - [Goals of This Guide](#goals-of-this-guide)
+  - [Vagrant box vs your local machine](#vagrant-box-vs-your-local-machine)
+  - [Interacting with Nomad, Vault and Consul](#interacting-with-nomad-vault-and-consul)
+  - [Using ansible](#using-ansible)
+  - [Making artifacts availabe inside the box](#making-artifacts-availabe-inside-the-box)
+    - [MinIO](#minio)
+    - [Synced folder](#synced-folder)
+  - [Building Docker Image](#building-docker-image)
+  - [Deploying Container With Nomad](#deploying-container-with-nomad)
+    - [Making image available to Nomad](#making-image-available-to-nomad)
+    - [Creating a nomad job](#creating-a-nomad-job)
+  - [Creating the Terraform Module](#creating-the-terraform-module)
+    - [main.tf](#maintf)
+    - [variables.tf](#variablestf)
+    - [outputs.tf](#outputstf)
+  - [Using Terraform Module With Ansible](#using-terraform-module-with-ansible)
+- [Usage](#usage)
+  - [Commands](#commands)
+  - [MinIO](#minio-1)
+    - [Pushing Resources To MinIO With Ansible (Docker image)](#pushing-resources-to-minio-with-ansible-docker-image)
+    - [Fetching Resources From MinIO With Nomad (Docker image)](#fetching-resources-from-minio-with-nomad-docker-image)
+  - [Iteration of the Development Process](#iteration-of-the-development-process)
+  - [Changelog](#changelog)
+- [Test Configuration and Execution](#test-configuration-and-execution)
+  - [Linters and formatting](#linters-and-formatting)
+    - [Linters](#linters)
+    - [Terraform formatting](#terraform-formatting)
+  - [Testing the module](#testing-the-module)
+- [If This Is in Your Own Repository](#if-this-is-in-your-own-repository)
 
 
 ## Description - What & Why
@@ -311,6 +334,130 @@ to the bottom of your [Vagrantfile](Vagrantfile), and change `vb.memory` and `vb
 
 > :bulb: The defaults can be found in [Vagrantfile.default](Vagrantfile.default).
 
+## Getting Started
+
+### Goals of This Guide
+The end goal of this guide is to create a **terraform module** that works seamlessly inside a **hashistack**
+ecosystem.
+
+> :bulb: **Hashistack**, in current repository context, is a set of software products by [HashiCorp](https://www.hashicorp.com/).
+
+If our terraform module is going to work properly with the hashistack we obviously need to both develop and test it within that very ecosystem. In short requires a full setup of Vault, Consul, Nomad, Terraform, and many  other technologies. We solve that with [Vagrant](https://www.vagrantup.com/). Vagrant is a technology that allows us to   easily set up a virtual machine based on a pre-made vagrant-box that is created by code we write. In the repository    [vagrant-hashistack](https://github.com/fredrikhgrelland/vagrant-hashistack/) we have a set of code that produces the vagrant-box called `fredrikhgrelland/hashistack` which is availabe on the [Vagrant cloud](https://vagrantcloud.com /fredrikhgrelland/hashistack). To set up a virtual machine based on this box you can write `vagrant init fredrikhgrelland` then `ANSIBLE_ARGS='--extra-vars "local_test=true"' vagrant up`. The `ANSIBLE_ARGS='--extra-vars "local_test=truei'"` lets the box know we are running it locally. When this vagrant-box is finished setting up you will have a virtual machine running on your local machine with the hashistack fully set up and ready to go. Without Vagrant every user that wants to effectively develop modules would have had to set up and integrate all the technologies on their own computers.
+
+ The template you found this README in is specificully built to make it as easy and quick as possible to make the aforementioned modules, and develop and test them within the vagrant-hashistack box. This guide aims to show you how to use this terraform modules. While building a terraform module using this template there are several steps you might want to take, listed below. The order is not random, but if you personally want to do it in another order, that is completely fine, and up to you. The most important part of this tutorial is that you get an introduction to what this template is, and how to use it. The steps we are going to walk through are as follows:
+
+- Building a docker image
+- Creating a nomad job that uses this image
+- Expanding nomad job so that it uses vault
+- Creating the terraform module
+- making the nomad job more dynamic
+
+### Vagrant box vs your local machine
+It's important to note that your local machine, and the running vagrant box (from now on called virtual machine) are two completely separate entitites. In our case Consul, Nomad, and Vault have all been forwarded so they are also avaialble at localhost, in addition to the virtual machine's IP (see below). MinIO has not been forwarded, and is only available at 10.0.3.10.
+Lastly, the virtual machine and local machine share the folder where the `Vagrantfile` lies, and will be mapped to `/vagrant` inside the virtual machine.
+```mermaid
+graph TD
+  subgraph local machine
+    subgraph "virtual machine (10.0.3.10)"
+        Consul
+        Nomad
+        Vault
+        vagrant["/vagrant"]
+        MinIO
+        Other[Other softwares installed]
+    end
+    localhost["localhost (127.0.0.1)"]
+    pwd["/<path-to-vagrantfile>"]
+  end
+  %% links
+  Consul-->localhost
+  Nomad-->localhost
+  Vault-->localhost
+  vagrant-->pwd
+```
+
+### Interacting with Nomad, Vault and Consul
+When a vagrant box is set up the virtual machine is available at the IP `10.0.3.10`, and Nomad, Vault, and Consul all listen to their default ports, which are `4646`, `8200`, and `8500` respectively. In other words, you can reach nomad on `10.0.3.10:4646`, vault on `10.0.3.10:8200` and consul on `10.0.3.10:8500`. For convenience sake these services have been port forwarded (as mentioned earlier), meaning they are also available at `localhost`, on the same ports; Nomad then becomes `localhost:4646`, Vault `localhost:8200`, and so on. Nomad, Vault and Consul have their own CLI-tools used to interact with the servers that are running, and they default to `localhost`, and the default ports just mentioned. This means you can download any of the binaries, and they will be connected to the services running inside the virtual machine right from the get-go. Refer to [this section](#iteration-of-the-development-process) to see examples on how to use this.
+
+### Using ansible
+When working with this box we will use a technology called [ansible](https://www.ansible.com/). In short, ansible is a software that logs onto a computer like a normal user, and performs tasks defined in an ansible playbook (example [template_example/dev/ansible/playbook.yml](template_example/dev/ansible/playbook.yml). We will mostly be using this to interact with our virtual machine. In our case _all_ playbooks put inside [dev/ansible/](./dev/ansible/) will be run every time we start the box, and we will utilise this throughout the guide.
+
+### Making artifacts availabe inside the box
+#### MinIO
+The virtual machine has MinIO set up. The service is available at `10.0.3.10`. Anything put in MinIO will be available to the box using MinIO. See [pushing docker image](#pushing-resources-to-minio-with-ansible-docker-image) and [fetching docker image](#fetching-resources-from-minio-with-nomad-docker-image) for examples on how to make a docker image available inside the box. We will be using this later in the guide.
+
+#### Synced folder
+As mentioned earlier the virtual machine and local machine have a folder that's shared. The folder which the `Vagrantfile` lies in is linked to `/vagrant` inside the box.
+
+### Building Docker Image
+> :warning: This section is only relevant if you want to build your own docker image.
+
+ Most of the terraform modules will deploy one or more docker-containers to Nomad. Many will want to create their own docker images for this. The template supplies a [docker/](/docker/) folder to do this.
+
+To build your own docker image start by adding a file named [`Dockerfile`](https://docs.docker.com/engine/reference/builder/) to [docker/](/docker/). You can then test and develop this image like you would with any other `Dockerfile`. Try and build this like any other docker-image by running `docker build ./docker` to see that everything is working properly. At this point we've got a docker image on our local machine, but as mentioned earlier the virtual machine and local machine are not the same thing. In other words, we need to get it into the virtual machine somehow. To do that we are going to archive it and put it into MinIO, which is on the virtual machine. You can jump to the next section to see how that is done.
+
+### Deploying Container With Nomad
+#### Making image available to Nomad
+After successfully building the docker image we want to create a nomad-job that takes this image and deploys it and registers it with consul, so that we have a running service. In the end this is what we want our terraform module to do, but we'll first do this manually to make sure everything is working before we try and wrap a terraform module around it. The image we built in our first step is now available as an image on our local machine, but our vagrant box does not have access to that. For all intents and purposes our local machine and the vagrant box are two different machines. In other words we need to somehow take our docker image, and make that available inside our box (because that is where the nomad service is running). To be able to transfer files from our local machine to the vagrant box we have set up a S3 storage solution called MinIO, that is available from our local machine at `http://10.0.3.10:9000`. You can think of it as a google drive. You can upload files from the UI in your browser, or we have also set it up so that all files put in the same directory as this README will be copied into MinIO. [This section](#pushing-resources-to-minio-with-ansible-docker-image) shows how we can use ansible code to first create a tmp folder, then build and archive our docker image in that tmp folder. Because the tmp folder is in the same directory as this readme it'll automatically now be available in MinIO. Lucky for us, nomad then has a way to extract images from MinIO and use them.
+
+#### Creating a nomad job
+Next step is to create the nomad job that deploys our image. This guide will not focus on how to make a nomad job, but a full example can be found at [template_example/conf/nomad/coundash.hcl](template_example/conf/nomad/coundash.hcl). To see how you can use the docker image we created in the previous step, see [this section](#fetching-resources-from-minio-with-nomad-docker-image). When the nomad job has been created we can try and run it. You can either log on the machine with vagrant ssh or run it locally from your computer with nomad job run nameofhcl.hcl. When you know that your container and nomad job is working as expected its time to wrap a terraform module around this, so that it is possible to import and run the terraform module, which will then start the whole service (which in this case is basically starting deploying the nomad job).
+
+### Creating the Terraform Module
+ A terraform module consists of a minimum of three files, main.tf, variables.tf, outputs.tf. main.tf contains the
+ providers and resources used, variables.tf contains all variables used, and outputs.tf defines any output variables (if relevant). At this point we will create the terraform module itself, then we will use ansible to import it into our box, and try and use it in our hashistack ecosystem.
+
+Just to sketch out what we want: the module itself should contain the resources that sets up a job in nomad. See [example](template_example/main.tf). We should then be able to write some terraform code that then imports this module and uses it.
+
+#### main.tf
+In our case the only thing our main.tf should contain is a resource that takes our nomad-job file and deploys it to nomad. To be able to use a resource that does this, we need to supply a [nomad provider](), but we do not want to supply that with the module itself. We would rather that the place that is importing the module supplies this. When done this way it ensures that the module is not tied down to one single nomad-provider, but can be used in different configurations with different nomad-providers. Below is an example of the commonly used resource `nomad-job`, that would reside within `main.tf`.
+    
+```hcl-terraform
+resource "nomad_job" "countdash" {
+  jobspec = file("${path.module}/conf/nomad/countdash.hcl")
+  detach  = false
+}
+```
+
+#### variables.tf
+In this file you define any variables you would want to be input variables to your module. An example could be "Name of your postgres database" if we are talking about a module that provisions a postgres database, or "Number of servers to provision" if you are provisioning a cluster of something. A variable is defined like below
+
+```hcl-terraform
+variable "service_name" {
+  type        = string
+  description = "Minio service name"
+  default     = "minio"
+}
+```
+
+#### outputs.tf
+This files contains variables that will be available as outputs when you use a module. Below is first an example of
+ how to define output-variables, then an example of how to use a module, and access their output variables.
+ Defining output variables
+ ```hcl-terraform
+output "nomad_job" {
+  value       = nomad_job.countdash
+  description = "The countdash nomad job object"
+}
+```
+
+Using a module and accessing its output variables
+ ```hcl
+module "postgres" {
+  source = "github.com/fredrikhgrelland/terraform-nomad-postgres.git?ref=0.0.1"
+}
+```
+
+Using a previously defined module to accesss its output variables
+ ```hcl
+resource "some other resource"{
+  outputvariable = module.postgres.outputvariable
+}
+```
+
+Together inputs and outputs should create a very clear picture of how a module should be used. For example in our hive module we have clearly defined that the module needs to have a postgres-address as an input. Looking at our postgres module, it has an output that is exactly that. In other words, we might need to import and setup a postgres-module before setting up our hive-module. Or, if we already have a postgres-address available, we could supply that instead. The goal is to clearly define the needs of a module, while at the same time making it flexible and generic (in the example of hive we give the user the ability to use any postgres they'd like).
+
+### Using Terraform Module With Ansible
 
 ## Usage
 ### Commands
