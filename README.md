@@ -65,7 +65,12 @@
     - [main.tf](#maintf)
     - [variables.tf](#variablestf)
     - [outputs.tf](#outputstf)
-  - [Using Terraform Module With Ansible](#using-terraform-module-with-ansible)
+  - [Using a Terraform Module](#using-a-terraform-module)
+  - [Using Ansible To Run the Code in the Previous Step on Our Virtual Machine](#using-ansible-to-run-the-code-in-the-previous-step-on-our-virtual-machine)
+  - [Making The Nomad Job More Dynamic With Terraform Variables](#making-the-nomad-job-more-dynamic-with-terraform-variables)
+  - [Making The Nomad Job More Dynamic With Consul Templating](#making-the-nomad-job-more-dynamic-with-consul-templating)
+  - [Integrating The Nomad Job With Vault](#integrating-the-nomad-job-with-vault)
+  - [Editing Github Workflows](#editing-github-workflows)
 - [Usage](#usage)
   - [Commands](#commands)
   - [MinIO](#minio-1)
@@ -348,13 +353,14 @@ If our terraform module is going to work properly with the hashistack we obvious
 
 - Building a docker image
 - Creating a nomad job that uses this image
-- Expanding nomad job so that it uses vault
 - Creating the terraform module
-- making the nomad job more dynamic
+- Making the nomad job more dynamic
 
 ### Vagrant box vs your local machine
 It's important to note that your local machine, and the running vagrant box (from now on called virtual machine) are two completely separate entitites. In our case Consul, Nomad, and Vault have all been forwarded so they are also avaialble at localhost, in addition to the virtual machine's IP (see below). MinIO has not been forwarded, and is only available at 10.0.3.10.
 Lastly, the virtual machine and local machine share the folder where the `Vagrantfile` lies, and will be mapped to `/vagrant` inside the virtual machine.
+
+TODO: generate PNG
 ```mermaid
 graph TD
   subgraph local machine
@@ -390,28 +396,30 @@ The virtual machine has MinIO set up. The service is available at `10.0.3.10`. A
 As mentioned earlier the virtual machine and local machine have a folder that's shared. The folder which the `Vagrantfile` lies in is linked to `/vagrant` inside the box.
 
 ### Building Docker Image
+
 > :warning: This section is only relevant if you want to build your own docker image.
 
  Most of the terraform modules will deploy one or more docker-containers to Nomad. Many will want to create their own docker images for this. The template supplies a [docker/](/docker/) folder to do this.
 
-To build your own docker image start by adding a file named [`Dockerfile`](https://docs.docker.com/engine/reference/builder/) to [docker/](/docker/). You can then test and develop this image like you would with any other `Dockerfile`. Try and build this like any other docker-image by running `docker build ./docker` to see that everything is working properly. At this point we've got a docker image on our local machine, but as mentioned earlier the virtual machine and local machine are not the same thing. In other words, we need to get it into the virtual machine somehow. To do that we are going to archive it and put it into MinIO, which is on the virtual machine. You can jump to the next section to see how that is done.
+To build your own docker image start by adding a file named [`Dockerfile`](https://docs.docker.com/engine/reference/builder/) to [docker/](/docker/). You can then test and develop this image like you would with any other `Dockerfile`. Try and build this like any other docker-image by running `docker build ./docker` to see that everything is working properly. At this point we've got a docker image on our local machine, but as mentioned earlier the virtual machine and local machine are not the same thing. We need to get it into the virtual machine somehow. To do that we are going to archive it and put it into MinIO, which is on the virtual machine. You can jump to the next section to see how that is done.
 
 ### Deploying Container With Nomad
+Now you should have a service that will run when you start the docker container. The next step is then to somehow deploy this service to our hashistack ecosystem. To do that we will use nomad. Nomad is running inside our virtual machine, and is used to deploy containers, and register them into consul. It also has tight integration with vault. 
+
 #### Making image available to Nomad
-After successfully building the docker image we want to create a nomad-job that takes this image and deploys it and registers it with consul, so that we have a running service. In the end this is what we want our terraform module to do, but we'll first do this manually to make sure everything is working before we try and wrap a terraform module around it. The image we built in our first step is now available as an image on our local machine, but our vagrant box does not have access to that. For all intents and purposes our local machine and the vagrant box are two different machines. In other words we need to somehow take our docker image, and make that available inside our box (because that is where the nomad service is running). To be able to transfer files from our local machine to the vagrant box we have set up a S3 storage solution called MinIO, that is available from our local machine at `http://10.0.3.10:9000`. You can think of it as a google drive. You can upload files from the UI in your browser, or we have also set it up so that all files put in the same directory as this README will be copied into MinIO. [This section](#pushing-resources-to-minio-with-ansible-docker-image) shows how we can use ansible code to first create a tmp folder, then build and archive our docker image in that tmp folder. Because the tmp folder is in the same directory as this readme it'll automatically now be available in MinIO. Lucky for us, nomad then has a way to extract images from MinIO and use them.
+After successfully building the docker image we want to create a nomad-job that takes this image and deploys it and registers it with consul, so that we have a running service. In the end this is what we want our terraform module to do, but we'll first do this manually to make sure everything is working before we try and wrap a terraform module around it. The image we built in our first step is now available as an image on our local machine, but our vagrant box does not have access to that. For all intents and purposes our local machine and the vagrant box are two different machines. In other words we need to somehow take our docker image, and make that available inside our box (because that is where the nomad server is running). To be able to transfer files from our local machine to the vagrant box we are going to use MinIO which was mentioned earlier. You can upload files from the UI in your browser, or we have also set it up so that all files put in the same directory as this README will be copied into MinIO. [This section](#pushing-resources-to-minio-with-ansible-docker-image) shows how we can use ansible code to first create a tmp folder, then build and archive our docker image in that tmp folder. Because the tmp folder is in the same directory as this README it'll automatically now be available in MinIO. Lucky for us, Nomad then has a way to extract images from MinIO and use them.
 
 #### Creating a nomad job
-Next step is to create the nomad job that deploys our image. This guide will not focus on how to make a nomad job, but a full example can be found at [template_example/conf/nomad/coundash.hcl](template_example/conf/nomad/coundash.hcl). To see how you can use the docker image we created in the previous step, see [this section](#fetching-resources-from-minio-with-nomad-docker-image). When the nomad job has been created we can try and run it. You can either log on the machine with vagrant ssh or run it locally from your computer with nomad job run nameofhcl.hcl. When you know that your container and nomad job is working as expected its time to wrap a terraform module around this, so that it is possible to import and run the terraform module, which will then start the whole service (which in this case is basically starting deploying the nomad job).
+Next step is to create the nomad job that deploys our image. This guide will not focus on how to make a nomad job, but a full example can be found at [template_example/conf/nomad/coundash.hcl](template_example/conf/nomad/coundash.hcl). To see how you can use the docker image we created in the previous step, see [fetching docker image](#fetching-resources-from-minio-with-nomad-docker-image). When the nomad job has been created we can try and run it. You can either log on the machine with `vagrant ssh` or run it locally from your computer with `nomad job run <nameofhcl.hcl>`. You can check the status of this by going to `localhost:4646`. When you know that your container and nomad job is working as expected its time to wrap a terraform module around this, so that it is possible to import and run the terraform module, which will then start the whole service (which in this case is basically starting deploying the nomad job).
 
 ### Creating the Terraform Module
- A terraform module consists of a minimum of three files, main.tf, variables.tf, outputs.tf. main.tf contains the
- providers and resources used, variables.tf contains all variables used, and outputs.tf defines any output variables (if relevant). At this point we will create the terraform module itself, then we will use ansible to import it into our box, and try and use it in our hashistack ecosystem.
+ A terraform module normally consists of a minimum of three files, `main.tf`, `variables.tf`, `outputs.tf`. Technically we only need one, but it's customary to include at least these three. `main.tf` contains the providers and resources used, `variables.tf` contains all variables used, and `outputs.tf` defines any output variables (if relevant). Our goal now is to create a terraform module that will take an HCL-file and deploy it to a given Nomad. This module should the be able to be used in different hashistack ecosystems that have a Consul, Nomad and Vault available. 
 
-Just to sketch out what we want: the module itself should contain the resources that sets up a job in nomad. See [example](template_example/main.tf). We should then be able to write some terraform code that then imports this module and uses it.
+Together inputs and outputs should create a very clear picture of how a module should be used. For example in our hive module we have clearly defined that the module needs to have a postgres-address as an input. Looking at our postgres module, it has an output that is exactly that. In other words, we might need to import and setup a postgres-module before setting up our hive-module. Or, if we already have a postgres-address available, we could supply that instead. The goal is to clearly define the needs of a module, while at the same time making it flexible and generic (in the example of hive we give the user the ability to use any postgres they'd like). How to use variables and outputs will be shown later in [make the module more dynamic]().
 
 #### main.tf
-In our case the only thing our main.tf should contain is a resource that takes our nomad-job file and deploys it to nomad. To be able to use a resource that does this, we need to supply a [nomad provider](), but we do not want to supply that with the module itself. We would rather that the place that is importing the module supplies this. When done this way it ensures that the module is not tied down to one single nomad-provider, but can be used in different configurations with different nomad-providers. Below is an example of the commonly used resource `nomad-job`, that would reside within `main.tf`.
-    
+In our case the only thing our main.tf should contain is a resource that takes our nomad-job file and deploys it to Nomad. To be able to use a resource that does this, we need to supply a [nomad provider](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs), but we do not want to supply that with the module itself. We would rather that the place that is importing the module supplies this. When done this way it ensures that the module is not tied down to one single nomad-provider, but can be used in different configurations with different nomad-providers. Below is an example of how to take a nomad-job file and deploy it to Nomad.
+
 ```hcl-terraform
 resource "nomad_job" "countdash" {
   jobspec = file("${path.module}/conf/nomad/countdash.hcl")
@@ -420,7 +428,7 @@ resource "nomad_job" "countdash" {
 ```
 
 #### variables.tf
-In this file you define any variables you would want to be input variables to your module. An example could be "Name of your postgres database" if we are talking about a module that provisions a postgres database, or "Number of servers to provision" if you are provisioning a cluster of something. A variable is defined like below
+In this file you define any variables you would want to be input variables to your module. If we are provisioning a postgres service, maybe we'd like a "Name of postgres database" variable as input, or "Number of servers to provision" if you are provisioning a cluster. A variable is defined like below
 
 ```hcl-terraform
 variable "service_name" {
@@ -434,6 +442,7 @@ variable "service_name" {
 This files contains variables that will be available as outputs when you use a module. Below is first an example of
  how to define output-variables, then an example of how to use a module, and access their output variables.
  Defining output variables
+
  ```hcl-terraform
 output "nomad_job" {
   value       = nomad_job.countdash
@@ -441,23 +450,18 @@ output "nomad_job" {
 }
 ```
 
-Using a module and accessing its output variables
- ```hcl
-module "postgres" {
-  source = "github.com/fredrikhgrelland/terraform-nomad-postgres.git?ref=0.0.1"
-}
-```
+### Using a Terraform Module
+At this point we have created three files, main.tf, variables.tf and outputs.tf. Together they do one thing, which is start a nomad job. 
 
-Using a previously defined module to accesss its output variables
- ```hcl
-resource "some other resource"{
-  outputvariable = module.postgres.outputvariable
-}
-```
+### Using Ansible To Run the Code in the Previous Step on Our Virtual Machine
 
-Together inputs and outputs should create a very clear picture of how a module should be used. For example in our hive module we have clearly defined that the module needs to have a postgres-address as an input. Looking at our postgres module, it has an output that is exactly that. In other words, we might need to import and setup a postgres-module before setting up our hive-module. Or, if we already have a postgres-address available, we could supply that instead. The goal is to clearly define the needs of a module, while at the same time making it flexible and generic (in the example of hive we give the user the ability to use any postgres they'd like).
+### Making The Nomad Job More Dynamic With Terraform Variables
 
-### Using Terraform Module With Ansible
+### Making The Nomad Job More Dynamic With Consul Templating
+
+### Integrating The Nomad Job With Vault
+
+### Editing Github Workflows
 
 ## Usage
 ### Commands
