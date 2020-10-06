@@ -23,17 +23,18 @@
 </p>
 
 ## Content
-1. [Description - What & Why](#description---what--why)
+1. [Content](#content)
+2. [Description - What & Why](#description---what--why)
    1. [Why Does This Exist?](#why-does-this-exist)
    2. [Services](#services)
       1. [Port collisions](#port-collisions)
-         1. [Shut down the running machine](#option-1-shut-down-the-running-machine)
-         2. [Use the `auto_correct` feature to dynamically allocate ports](#option-2-use-the-auto_correct-feature-to-dynamically-allocate-ports)
-2. [Install Prerequisites](#install-prerequisites)
+         1. [Option 1 Shut down the running machine](#option-1-shut-down-the-running-machine)
+         2. [Option 2 Use the `auto_correct` feature to dynamically allocate ports](#option-2-use-the-auto_correct-feature-to-dynamically-allocate-ports)
+3. [Install Prerequisites](#install-prerequisites)
    1. [Packages that needs to be pre-installed](#packages-that-needs-to-be-pre-installed)
       1. [MacOS Specific](#macos-specific)
       2. [Ubuntu Specific](#ubuntu-specific)
-3. [Configuration](#configuration)
+4. [Configuration](#configuration)
    1. [Startup Scheme](#startup-scheme)
       1. [Detailed Startup Procedure](#detailed-startup-procedure)
    2. [Pre and Post Hashistack Startup Procedure](#pre-and-post-hashistack-startup-procedure)
@@ -43,20 +44,26 @@
       1. [Enterprise vs Open Source Software (OSS)](#enterprise-vs-open-source-software-oss)
       2. [Nomad](#nomad)
       3. [Consul](#consul)
-         1. [Enterprise - namespaces](#enterprise---namespaces)
+         1. [Enterprise - Namespaces](#enterprise---namespaces)
       4. [Vault](#vault)
          1. [Consul Secrets Engine](#consul-secrets-engine)
          2. [Vault PKI](#vault-pki)
-   2. [Vagrant Box Resources](#vagrant-box-resources)
-4. [Usage](#usage)
-   1. [Commands](#commands)
-   2. [MinIO](#minio)
+   4. [Vagrant Box Resources](#vagrant-box-resources)
+5. [Usage](#usage)
+   1. [Getting started](#getting-started)
+   2. [Commands](#commands)
+   3. [MinIO](#minio)
       1. [Pushing Resources To MinIO With Ansible (Docker image)](#pushing-resources-to-minio-with-ansible-docker-image)
       2. [Fetching Resources From MinIO With Nomad (Docker image)](#fetching-resources-from-minio-with-nomad-docker-image)
    3. [Iteration of the Development Process](#iteration-of-the-development-process)
    4. [Changelog](#changelog)
    5. [How to sync module with the latest template](#how-to-sync-module-with-the-latest-template)
-5. [Test Configuration and Execution](#test-configuration-and-execution)
+6. [Test Configuration and Execution](#test-configuration-and-execution)
+   1. [Linters and formatting](#linters-and-formatting)
+      1. [Linters](#linters)
+      2. [Terraform formatting](#terraform-formatting)
+   2. [Testing the module](#testing-the-module)
+7. [If This Is in Your Own Repository](#if-this-is-in-your-own-repository)
 
 
 ## Description - What & Why
@@ -67,6 +74,7 @@ This template is a starting point, and example, on how to take advantage of the 
 
 > :bulb: If you found this in `fredrikhgrelland/vagrant-hashistack`, you may be interested in the separate repository [vagrant-hashistack-template](https://github.com/fredrikhgrelland/vagrant-hashistack-template/).  
 > :warning: If you are reading this in your own repository, go to [If This Is in Your Own Repository](#if-this-is-in-your-own-repository)
+> :warning: There is a separate file `getting_started.md` that guides you through creating your first terraform module with this template
 
 ### Why Does This Exist?
  This template aims to standardize workflow for building and testing terraform-nomad-modules, using the [fredrikhgrelland/hashistack](https://github.com/fredrikhgrelland/vagrant-hashistack) vagrant-box.
@@ -312,8 +320,14 @@ to the bottom of your [Vagrantfile](Vagrantfile), and change `vb.memory` and `vb
 
 > :bulb: The defaults can be found in [Vagrantfile.default](Vagrantfile.default).
 
-
 ## Usage
+
+### Getting started
+There are two "Gettinng started" guides:
+1. [`getting_started_vagrantbox.md`](getting_started_vagrantbox.md), that will guide you through how to use the vagrantbox, geared towards those using the box to develop terraform modules.
+ `getting_started.md` that will guide you through creating your first terraform module using this template. If you don't know where to start, start there!
+1. [`getting_started_modules.md`](getting_started_modules.md), that will guide you through how to create a terraform module with this template.
+
 ### Commands
 There are several commands that help to run the vagrant-box:
 - `make install` installs all prerequisites. Run once.
