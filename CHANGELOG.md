@@ -17,6 +17,7 @@
 - Added `make pre-commit` command that use local linter and formatts/prettyfies all `.tf` files #24
 - `Vault PKI` section to README
 - Token for terraform-provider-vault #35
+- Added changelog enforcer to pipeline checks #31
 
 ### Fixed
 
