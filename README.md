@@ -463,8 +463,9 @@ git pull
 ```
 4 Checkout new branch from origin master of current module
 ```text
-git checkout -b sync master
-git pull
+git checkout master    # checkout master
+git pull               # pull the latest master
+git checkout -b sync   # checkout new branch `sync` from master
 ```
 5 Run git merge with the flag --allow-unrelated-histories
 ```text
