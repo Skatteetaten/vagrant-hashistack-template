@@ -472,7 +472,8 @@ git merge template-master --allow-unrelated-histories
 ```
 6 Fix conflicts (carefully)  
 7 Commit changes  
-8 Make pull request  
+8 Push branch sync
+9 Make pull request `sync` against `master` branch
 
 ### Testing the module
 The tests are run using [Github Actions](https://github.com/features/actions) feature which makes it possible to automate, customize, and execute the software development workflows right in the repository. We utilize the **matrix testing strategy** to cover all the possible and logical combinations of the different properties and values that the components support. The .env_override file is used by the tests to override the values that are available in the .env_default file, as well as the user configurable .env file.
