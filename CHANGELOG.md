@@ -2,13 +2,13 @@
 
 ## [0.0.1 UNRELEASED]
 
-
 ### Changed
 
 - updated documentation: consul namespaces #28
 - trigger tests for template_example by condition #12
 - updated the make clean in makefile to remove more tmp files/folders #8
 - updated up and template_example targets in makefile to use ci_test instead of local_test variable #38
+- updated to fit hashistack v0.5.0
 
 ### Added
 
