@@ -1,11 +1,11 @@
 ## The goal of this guide 
 
-> :warning: Before anything, if you haven't, read the section `Description - what & why` in [README.md](/README.md).
+> :warning: Read the section `Description - what & why` in [README.md](/README.md) to get a quick introduction to what this repo is.
 
 The goal of this guide is to give an introduction to the [vagrant hashistack box](https://vagrantcloud.com/fredrikhgrelland/hashistack), its features, and how to use it.
 
 ## What is the vagrant hashistack box
-The vagrant-hashistack box is a virtual machine built with [vagrant](https://www.vagrantup.com/), using the code from [this repository](https://github.com/fredrikhgrelland/vagrant-hashistack/). It aims to simulate a hashistack ecosystem, and with the help of built in switches and services it is able to be tweaked to a user's needs. The Norwegian Tax Administration is using this box as a part of their CI/CD pipeline to test terraform modules in their microservice architecture. 
+The vagrant-hashistack box is a virtual machine built with [vagrant](https://www.vagrantup.com/), using the code from [vagrant-hashistack](https://github.com/fredrikhgrelland/vagrant-hashistack/). It aims to simulate a hashistack ecosystem, and with the help of built in switches and services it is able to be tweaked to a user's needs. 
 
 > :bulb: **Hashistack**, in current repository context, is a set of software products by [HashiCorp](https://www.hashicorp.com/).
 
@@ -39,17 +39,21 @@ graph TD
 ### Services inside box
 The virtual machine has four services running:
 
-|Name|port|
-|:--|:-:|
-|Consul|8500|
-|Vault|8200|
-|Nomad|4646|
-|MinIO|9000|
+|Name|port|virtual machine|local machine|
+|:---|:---:|:---|:---|
+|Consul|8500|10.0.3.10:8500|localhost:8500|
+|Vault|8200|10.0.3.10:8200|localhost:8200|
+|Nomad|4646|10.0.3.10:4646|localhost:4646|
+|MinIO|9000|10.0.3.10:9000|-|
 
 As mentioned the virtual machine can be reached at `10.0.3.10`, meaning the services will be available at `10.0.3.10:<port-number>`. For convenience Consul, Vault, and Nomad have all been forwarded to `localhost` as well, meaning they are available at `localhost:<port-number>`. MinIO has _not_ been forwarded.  
 
 ### CLI-tools
-Nomad, Vault and Consul have their own CLI-tools to interact with the servers that are running. They all default to `localhost`, and the default ports mentioned above. This means you can download any of the binaries, and they will automatically be connected to the services running inside the virtual machine. Refer to [this section](#iteration-of-the-development-process) to see examples on how to use this.
+Nomad, Vault and Consul have their own CLI-tools to interact with the servers that are running. They all default to `localhost`, and the default ports mentioned above. This
+ means you can download any of the binaries, and use them against the services inside the virtual machine. Refer to [Iteration of The Development
+  process
+ ](./README.md#iteration-of-the-development-process) to see
+  examples on how to use this.
 
 ### Using ansible
 When working with this box we will use a technology called [ansible](https://www.ansible.com/). In short, ansible is a software that logs onto a computer like a normal user, and performs tasks defined in an ansible playbook (example [template_example/dev/ansible/playbook.yml](template_example/dev/ansible/playbook.yml). We will mostly be using this to interact with our virtual machine. In our case _all_ playbooks put inside [dev/ansible/](./dev/ansible/) will be run every time we start the box, and we will utilise this throughout the guide.
@@ -66,7 +70,8 @@ Anything put in MinIO will be available to the virtual machine. Two methods are 
 - 1. Upload files via the UI at `10.0.3.10:9000`. 
 - 2. _All_ files put in the root directory (same as this file) will be automatically synced with MinIO
 
-See [pushing docker image](#pushing-resources-to-minio-with-ansible-docker-image) and [fetching docker image](#fetching-resources-from-minio-with-nomad-docker-image) for examples on how to upload a docker image. We will be using this later in the guide.
+See [pushing docker image](/README.md#pushing-resources-to-minio-with-ansible-docker-image) and [fetching docker image](/README.md#fetching-resources-from-minio-with-nomad-docker-image) for
+ examples on how to upload a docker image. We will be using this later in the guide.
 
 
 ### Your First Running Virtual Machine
