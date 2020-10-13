@@ -24,8 +24,7 @@
 
 > :warning: Read the section `Description - what & why` in [README.md](/README.md) to get a quick introduction to what this repo is.
 
-The template-repo you found this README in is specifically built to make it as easy and quick as possible to make terraform modules, and then test them inside the [vagrant
--hashistack](https://app.vagrantup.com/fredrikhgrelland/boxes/hashistack) box. 
+The template-repo you found this README in is specifically built to make it as easy and quick as possible to make terraform modules, and then test them inside the [vagrant-hashistack](https://app.vagrantup.com/fredrikhgrelland/boxes/hashistack) box. 
 
 This guide aims to show you how to use this template. 
 The steps we are going to walk through are as follows:
@@ -48,7 +47,7 @@ All directories have their own uses, detailed below:
 │   ├── ansible #--------------------- All playbooks
 │   └── vagrant #--------------------- All box spesific jobs
 ├── docker #-------------------------- Dockerfile and docker-image related files
-├── example #------------------------- Should include a working example of your module
+├── example #------------------------- Should include a working example(s) of your module
 └── template_example #---------------- An example module for reference
 ```
 
@@ -60,7 +59,7 @@ All directories have their own uses, detailed below:
 
 Most of the terraform modules will deploy one or more docker-containers to Nomad. 
 If you want to create your own docker-image, put the [`Dockerfile`](https://docs.docker.com/engine/reference/builder/) under [docker/](/docker/).
-
+You can find an example where we build docker image for the module in [template_example](/template_example/docker)
 #### 2. Deploying Container With Nomad
 At this point you should have a service that will run when you start the docker container. 
 TODO:ADD LINK TO SIMPLE CONTAINER TO USE FOR GUIDE Either you've made a container yourself, or you are using some other container. 
@@ -73,7 +72,7 @@ It also has a tight integration with vault that we will use later.
 > :warning: Skip this step if you are using a pre-made image from [dockerhub](https://hub.docker.com/) or another registry
 
 The image we built in our first step is now available as an image on our local machine, but nomad inside the virtual machine does not have access to that. The only way nomad can
- use our image is by fetching it from MinIO, which means we need to upload it to MinIO somehow.
+ use our image is by [fetching it from MinIO](https://github.com/fredrikhgrelland/vagrant-hashistack-template/blob/master/template_example/conf/nomad/countdash.hcl#L35-L36), which means we need to upload it to MinIO somehow.
 From [the MinIO section](/getting_started_vagrantbox.md#2-minio) we know that anything inside `/vagrant` will be made available.
 [This section](/README.md#pushing-resources-to-minio-with-ansible-docker-image) shows how we can use ansible code to get our image in a subfolder of `/vagrant`:
 
@@ -85,7 +84,7 @@ From [the MinIO section](/getting_started_vagrantbox.md#2-minio) we know that an
 Next step is to create the nomad job that deploys our image. 
 This guide will not focus on how to make a nomad job, but a full example can be found at [template_example/conf/nomad/countdash.
 hcl](template_example/conf/nomad/countdash.hcl). Your nomad job-file should go under `conf/nomad/`. If you made your own docker image see [fetching docker image](#fetching-resources-from-minio-with-nomad-docker-image) on how to use that in your nomad job. 
-When the nomad job-file has been created we can try and run it. 
+When the nomad job-file has been created we can try to run it. 
 We can do this one of two ways:
 
 - Log on the machine with `vagrant ssh` and run it with the nomad-cli available on the virtual machine. Remember that all files inside `/vagrant` are shared with the folder of this file, meaning you can go to `/vagrant/conf/nomad` to find your hcl-file. Then run it with `nomad job run <nameofhcl.hcl>`.  
@@ -94,6 +93,7 @@ We can do this one of two ways:
 After sending the job to nomad you can check the status by going to `localhost:4646`. If you see your job running you can go to the next step.
 
 #### 3. Creating the Terraform Module
+> :bulb: Check official documentation - [Creation terraform modules](https://www.terraform.io/docs/modules/index.html)
 Now that we know the nomad-job is working we want to write some terraform code that when imported will take the hcl-file and run the nomad-job. 
 This is our terraform module!
 
@@ -114,8 +114,7 @@ resource "nomad_job" "countdash" {
 }
 ```
 
-`${path.
-module}` is the path to where our module is. `detach = false` tells terraform to wait for the service to be healthy in nomad before finishing. 
+`${path.module}` is the path to where our module is. `detach = false` tells terraform to wait for the service to be healthy in nomad before finishing. 
 [Documentation on the resource used](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs/resources/job).
 
 
@@ -245,13 +244,64 @@ variable "docker_image" {
  
 Now try to run this module like you've done earlier. 
 At this point you'll get an error TODO:ADD ACTUAL ERROR MSG. 
-This is because there is no code anywhere defining `container_name`. 
+This is because there is no code anywhere defining `docker_image `. 
 
-TODO: FINISH THIS SECTION
+How dynamic the nomad job suppose to be is defined by the needs of the end-user who are going to use this module. There are two main methods that we recommend.
+
+##### Method 1 - extract dynamic data into variables.tf
+
+We advise starting simple with doing extraction of potentially dynamic data in nomad job, such as:
+- job name
+- list of data centers
+- namespace (enterprise only)
+- properties of [update stanza](https://www.nomadproject.io/docs/job-specification/update)
+- [service name stanza](https://www.nomadproject.io/docs/job-specification/service#name)
+- env variables in [template stanza](https://www.nomadproject.io/docs/job-specification/template)
+- docker image in [task -> config -> image](https://www.nomadproject.io/docs/drivers/docker)
+- ...
+
+> Extracting variables is a process, so you do not need to extract all dynamic data at once. Try to prioritize user needs.
+
+##### Method 2 - conditional rendering of nomad job
+You can add a variable in `variables.tf` to define a condition.
+This variable will be used to control if-statement how to render the nomad job.
+
+Example:  
+
+`variables.tf`
+
+/```hcl
+variable "use_canary" {
+  type = bool
+  description = "Uses canary deployment for Presto"
+  default = false
+}
+/```
+
+`nomad-job.hcl`
+/```hcl
+...
+update {
+  max_parallel      = 1
+  health_check      = "checks"
+  min_healthy_time  = "10s"
+  healthy_deadline  = "12m"
+  progress_deadline = "15m"
+  %{ if use_canary }
+  canary            = 1
+  auto_promote      = true
+  auto_revert       = true
+  %{ endif }
+  stagger           = "30s"
+}
+...
+/```
+
 
 #### 6. Integrating The Nomad Job With Vault
 When we create modules we often need to provide our service with a key or a secret, and in some cases both. 
 However, in either case we can use [Vault](https://www.vaultproject.io/) to store keys and secrets that we can get later in our code. 
+> :warning: All communication between `terraform` and `vault` is handled by [terraform-provider-vault](https://registry.terraform.io/providers/hashicorp/vault/latest/docs)
 
 Let's use [Postgres](https://www.postgresql.org/) as an example, and say we need to provide it with a username and password. 
 The first thing you want to do is to create and store the username and password in Vault. 
@@ -263,7 +313,7 @@ vault kv put secret/postgres username=pguser1 password=123456
 ```
 You can go to [localhost:8200](http://localhost:8200/) to verify that your keys got uploaded.
 
-What we can do next, is to use the [template]() stanza inside our `.hcl` file, and use [consul-template syntax](https://github.com/hashicorp/consul-template#secret) to render a our keys into to separate environment variables.
+What we can do next, is to use the [template](https://www.nomadproject.io/docs/job-specification/template) stanza inside our `.hcl` file, and use [consul-template syntax](https://github.com/hashicorp/consul-template#secret) to render our keys into to separate environment variables.
 ```hcl-terraform
 template {
     destination = "local/secrets/.envs"
