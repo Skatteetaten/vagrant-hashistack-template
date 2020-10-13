@@ -250,7 +250,34 @@ This is because there is no code anywhere defining `container_name`.
 TODO: FINISH THIS SECTION
 
 #### 6. Integrating The Nomad Job With Vault
-TODO
+When we create modules we often need to provide our service with a key or a secret, and in some cases both. 
+However, in either case we can use [Vault](https://www.vaultproject.io/) to store keys and secrets that we can get later in our code. 
+
+Let's use [Postgres](https://www.postgresql.org/) as an example, and say we need to provide it with a username and password. 
+The first thing you want to do is to create and store the username and password in Vault. 
+For this purpose we'll be using the Vault binary, but keep in mind that we ultimately want to automate this using [Ansible-playbooks](). 
+See the command below:
+```sh
+# Create a key 'username' with value 'pguser1' and the key 'password' with value '123456'
+vault kv put secret/postgres username=pguser1 password=123456
+```
+You can go to [localhost:8200](http://localhost:8200/) to verify that your keys got uploaded.
+
+What we can do next, is to use the [template]() stanza inside our `.hcl` file, and use [consul-template syntax](https://github.com/hashicorp/consul-template#secret) to render a our keys into to separate environment variables.
+```hcl-terraform
+template {
+    destination = "local/secrets/.envs"
+    change_mode = "noop"
+    env         = true
+    data        = <<EOF
+PG_USERNAME={{ with secret "secret/postgres" }}{{ Data.username }}{{ end }}
+PG_PASSWORD={{ with secret "secret/postgres" }}{{ Data.password }}{{ end }}
+EOF
+}
+```
+When you re-run your code using `terraform apply`, the environment variables created in the template should now be available inside the running task container.
+
+> :bulb: Note that you can use [Vault plugin](https://www.vaultproject.io/docs/internals/plugins) to get more useful functionallity out of Vault.
 
 #### 7. CI/CD Pipeline To Continuously Test The Module When Changes Are Made
 TODO
