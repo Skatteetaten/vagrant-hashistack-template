@@ -1,5 +1,4 @@
 include dev/.env
-export
 export PATH := $(shell pwd)/tmp:$(PATH)
 
 .ONESHELL .PHONY: up update-box destroy-box remove-tmp clean example
@@ -35,7 +34,7 @@ ifdef CUSTOM_CA
 endif
 
 up: update-box custom_ca
-ifdef CI # CI is set in Github Actions
+ifeq ($(GITHUB_ACTIONS),true) # Always set to true when GitHub Actions is running the workflow. You can use this variable to differentiate when tests are being run locally or by GitHub Actions.
 	SSL_CERT_FILE=${SSL_CERT_FILE} CURL_CA_BUNDLE=${CURL_CA_BUNDLE} ANSIBLE_ARGS='--extra-vars "ci_test=true"' vagrant up --provision
 else
 	SSL_CERT_FILE=${SSL_CERT_FILE} CURL_CA_BUNDLE=${CURL_CA_BUNDLE} CUSTOM_CA=${CUSTOM_CA} vagrant up --provision
@@ -44,7 +43,7 @@ endif
 test: clean up
 
 template_example: custom_ca
-ifdef CI # CI is set in Github Actions
+ifeq ($(GITHUB_ACTIONS),true) # Always set to true when GitHub Actions is running the workflow. You can use this variable to differentiate when tests are being run locally or by GitHub Actions.
 	cd template_example; SSL_CERT_FILE=${SSL_CERT_FILE} CURL_CA_BUNDLE=${CURL_CA_BUNDLE} ANSIBLE_ARGS='--extra-vars "ci_test=true"' vagrant up --provision
 else
 	if [ -f "docker/conf/certificates/*.crt" ]; then cp -f docker/conf/certificates/*.crt template_example/docker/conf/certificates; fi
@@ -59,7 +58,6 @@ destroy-box:
 	vagrant destroy -f
 
 remove-tmp:
-remove-tmp:
 	rm -rf ./tmp
 	rm -rf ./.vagrant
 	rm -rf ./.minio.sys
@@ -73,6 +71,6 @@ clean: destroy-box remove-tmp
 update-box:
 	@SSL_CERT_FILE=${SSL_CERT_FILE} CURL_CA_BUNDLE=${CURL_CA_BUNDLE} vagrant box update || (echo '\n\nIf you get an SSL error you might be behind a transparent proxy. \nMore info https://github.com/fredrikhgrelland/vagrant-hashistack/blob/master/README.md#proxy\n\n' && exit 2)
 
-pre-commit: check_for_docker_binary
+pre-commit: check_for_docker_binary check_for_terraform_binary
 	docker run -e RUN_LOCAL=true -v "${PWD}:/tmp/lint/" github/super-linter
 	terraform fmt -recursive && echo "\e[32mTrying to prettify all .tf files.\e[0m"
