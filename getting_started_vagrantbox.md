@@ -49,11 +49,8 @@ The virtual machine has four services running:
 As mentioned the virtual machine can be reached at `10.0.3.10`, meaning the services will be available at `10.0.3.10:<port-number>`. For convenience Consul, Vault, and Nomad have all been forwarded to `localhost` as well, meaning they are available at `localhost:<port-number>`. MinIO has _not_ been forwarded.  
 
 ### CLI-tools
-Nomad, Vault and Consul have their own CLI-tools to interact with the servers that are running. They all default to `localhost`, and the default ports mentioned above. This
- means you can download any of the binaries, and use them against the services inside the virtual machine. Refer to [Iteration of The Development
-  process
- ](./README.md#iteration-of-the-development-process) to see
-  examples on how to use this.
+Nomad, Vault and Consul have their own CLI-tools to interact with the servers that are running. They all default to `localhost`, and the default ports mentioned above.
+This means you can download any of the binaries, and use them against the services inside the virtual machine. Refer to [Iteration of The Development process](./README.md#iteration-of-the-development-process) to see examples of how to use this.
 
 ### Using ansible
 When working with this box we will use a technology called [ansible](https://www.ansible.com/). In short, ansible is a software that logs onto a computer like a normal user, and performs tasks defined in an ansible playbook (example [template_example/dev/ansible/playbook.yml](template_example/dev/ansible/playbook.yml). We will mostly be using this to interact with our virtual machine. In our case _all_ playbooks put inside [dev/ansible/](./dev/ansible/) will be run every time we start the box, and we will utilise this throughout the guide.
@@ -70,8 +67,8 @@ Anything put in MinIO will be available to the virtual machine. Two methods are 
 - 1. Upload files via the UI at `10.0.3.10:9000`. 
 - 2. _All_ files put in the root directory (same as this file) will be automatically synced with MinIO
 
-See [pushing docker image](/README.md#pushing-resources-to-minio-with-ansible-docker-image) and [fetching docker image](/README.md#fetching-resources-from-minio-with-nomad-docker-image) for
- examples on how to upload a docker image. We will be using this later in the guide.
+See [pushing docker image](/README.md#pushing-resources-to-minio-with-ansible-docker-image) and [fetching docker image](/README.md#fetching-resources-from-minio-with-nomad-docker-image) for examples on how to upload a docker image.
+We will be using this later in the guide.
 
 
 ### Your First Running Virtual Machine
