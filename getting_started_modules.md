@@ -78,7 +78,7 @@ It also has a tight integration with Vault that we will use later.
 > :warning: Skip this step if you are using a pre-made image from [dockerhub](https://hub.docker.com/), or another registry
 
 The image we built in our first step is now available as an image on our local machine, but nomad inside the virtual machine does not have access to that.
-The only way Nomad can use our image is by [fetching it from MinIO](https://github.com/fredrikhgrelland/vagrant-hashistack-template/blob/master/template_example/conf/Nomad/countdash.hcl#L35-L36), which means we need to upload it to MinIO somehow.
+The only way Nomad can use our image is by [fetching it from MinIO](https://github.com/fredrikhgrelland/vagrant-hashistack-template/blob/master/template_example/conf/nomad/countdash.hcl#L35-L36), which means we need to upload it to MinIO somehow.
 From [the MinIO section](/getting_started_vagrantbox.md#2-minio) we know that anything inside `/vagrant` will be made available.
 [This section](/README.md#pushing-resources-to-minio-with-ansible-docker-image) shows how we can use ansible code to get our image in a subfolder of `/vagrant`:
 
