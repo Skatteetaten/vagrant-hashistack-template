@@ -270,16 +270,16 @@ Example:
 
 `variables.tf`
 
-/```hcl
+```hcl
 variable "use_canary" {
   type = bool
   description = "Uses canary deployment for Presto"
   default = false
 }
-/```
+```
 
 `nomad-job.hcl`
-/```hcl
+```hcl
 ...
 update {
   max_parallel      = 1
@@ -295,7 +295,7 @@ update {
   stagger           = "30s"
 }
 ...
-/```
+```
 
 
 #### 6. Integrating The Nomad Job With Vault
@@ -330,4 +330,9 @@ When you re-run your code using `terraform apply`, the environment variables cre
 > :bulb: Note that you can use [Vault plugin](https://www.vaultproject.io/docs/internals/plugins) to get more useful functionallity out of Vault.
 
 #### 7. CI/CD Pipeline To Continuously Test The Module When Changes Are Made
-TODO
+To test repositories you can use [github actions](https://github.com/features/actions). 
+They are written as workflows, which you can find under [.github/workflows](/.github
+/workflows).
+In this template a `make test` will be run with all permutations of configuration switches provided by the vagrant-hashistack box every time a PR is created or altered. 
+Refer to [test configuration](/README.md#test-configuration-and-execution) for details. 
+To change what tests are run you can either rewrite the `test` target in te [Makefile](/Makefile), or the workflows directly.  
