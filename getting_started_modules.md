@@ -62,7 +62,7 @@ If you want to create your own docker-image, put the [`Dockerfile`](https://docs
 You can find an example where we build docker image for the module in [template_example](/template_example/docker)
 #### 2. Deploying Container With Nomad
 At this point you should have a service that will run when you start the docker container. 
-TODO:ADD LINK TO SIMPLE CONTAINER TO USE FOR GUIDE Either you've made a container yourself, or you are using some other container. 
+Either you've made an image yourself, or you are using some pre-made docker image. 
 The next step is then to deploy this container to our hashistack ecosystem. Nomad is running inside our virtual machine, and is used to deploy containers, and register them into Consul. 
 It also has a tight integration with vault that we will use later. 
 
@@ -243,7 +243,7 @@ variable "docker_image" {
 ```
  
 Now try to run this module like you've done earlier. 
-At this point you'll get an error TODO:ADD ACTUAL ERROR MSG. 
+At this point you'll get an error along the lines of "docker_image variable is not present". 
 This is because there is no code anywhere defining `docker_image `. 
 
 How dynamic the nomad job suppose to be is defined by the needs of the end-user who are going to use this module. There are two main methods that we recommend.
@@ -305,7 +305,7 @@ However, in either case we can use [Vault](https://www.vaultproject.io/) to stor
 
 Let's use [Postgres](https://www.postgresql.org/) as an example, and say we need to provide it with a username and password. 
 The first thing you want to do is to create and store the username and password in Vault. 
-For this purpose we'll be using the Vault binary, but keep in mind that we ultimately want to automate this using [Ansible-playbooks](). 
+For this purpose we'll be using the Vault binary, but keep in mind that we ultimately want to automate this using [Ansible-playbooks](https://docs.ansible.com/ansible/latest/user_guide/playbooks.html). 
 See the command below:
 ```sh
 # Create a key 'username' with value 'pguser1' and the key 'password' with value '123456'
@@ -331,8 +331,7 @@ When you re-run your code using `terraform apply`, the environment variables cre
 
 #### 7. CI/CD Pipeline To Continuously Test The Module When Changes Are Made
 To test repositories you can use [github actions](https://github.com/features/actions). 
-They are written as workflows, which you can find under [.github/workflows](/.github
-/workflows).
+They are written as workflows, which you can find under [.github/workflows](/.github/workflows).
 In this template a `make test` will be run with all permutations of configuration switches provided by the vagrant-hashistack box every time a PR is created or altered. 
 Refer to [test configuration](/README.md#test-configuration-and-execution) for details. 
 To change what tests are run you can either rewrite the `test` target in te [Makefile](/Makefile), or the workflows directly.  
