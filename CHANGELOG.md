@@ -2,7 +2,10 @@
 
 ## [0.1.0 UNRELEASED]
 
-## Changed
+### Added
+- Added github templates for issues and PR #55
+
+### Changed
 
 - updated to fit hashistack v0.6.0
 
