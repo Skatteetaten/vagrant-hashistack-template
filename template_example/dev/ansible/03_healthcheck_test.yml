@@ -1,0 +1,68 @@
+- name: set variable
+  set_fact:
+    consul_token: "master"
+  tags: test
+
+- name: countdash healthcheck test without consul token (when consul acl default policy is allow)
+  uri:
+    url: http://localhost:8500/v1/health/checks/count-dashboard
+    method: GET
+    return_content: yes
+    status_code: 200
+    body_format: json
+  when: not lookup('env', 'consul_acl') | bool
+  register: result_countdashboard
+  retries: 15
+  delay: 15
+  until:
+    - result_countdashboard.json | length == 1
+    - '"warning" not in result_countdashboard | string'
+    - '"critical" not in result_countdashboard | string'
+  tags: test
+
+- name: countdash healthcheck test with consul token (when consul acl default policy is deny)
+  uri:
+    url: http://localhost:8500/v1/health/checks/count-dashboard
+    method: GET
+    headers:
+      X-Consul-Token: "{{ consul_token }}"
+    return_content: yes
+    status_code: 200
+    body_format: json
+  when:
+    - lookup('env', 'consul_acl') | bool
+    - lookup('env', 'consul_acl_default_policy') == 'deny'
+  register: result_countdashboard
+  retries: 1
+  delay: 1
+  until:
+    - result_countdashboard.json | length == 1
+    - '"warning" not in result_countdashboard | string'
+    - '"critical" not in result_countdashboard | string'
+  tags: test
+
+- name: Verify connection status between count-dashboard and count-api
+  shell:
+    cmd: |
+      curl --include \
+      --no-buffer \
+      --http1.1 \
+      --header "Connection: Upgrade" \
+      --header "Upgrade: websocket" \
+      --header "Host: 10.0.3.10:9002" \
+      --header "Origin: http://10.0.3.10:9002" \
+      --header "Sec-WebSocket-Key: SGVsbG8sIHdvcmxkIQ==" \
+      --header "Sec-WebSocket-Version: 13" \
+      http://10.0.3.10:9002/socket.io/?EIO=3&transport=websocket
+  args:
+    warn: false
+  register: output
+  until:
+    - '"[Unreachable]" not in output.stdout_lines | string'
+    - '"-1" not in output.stdout_lines | string'
+  tags: test
+
+- name: Debug output
+  debug:
+    msg: "{{output.stdout_lines}}"
+  tags: test
