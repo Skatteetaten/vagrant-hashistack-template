@@ -3,7 +3,9 @@
 ## [0.1.0 UNRELEASED]
 
 ### Added
+
 - Added github templates for issues and PR #55
+- Added healthcheck for countdash nomad job #56
 
 ### Changed
 
