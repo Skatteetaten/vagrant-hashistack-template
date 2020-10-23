@@ -1,10 +1,7 @@
-# Overriding and appending nomad configuration
-
-You may add any hcl-files to this directory in order to change the configuration.
-Any valid configuration added to this directory will append the configuration, in lexical order.
-
-Adding a file `99-override.hcl` you will ensure it will be appended last, and 00-override.hcl will be read first.
-Any valid configuration from [https://www.nomadproject.io/docs/configuration#general-parameters](https://www.nomadproject.io/docs/configuration#general-parameters) will work.
+# Nomad configuration 
+You may add any hcl-files to this directory in order to change or override the configuration.
+Any valid [nomad configuration](https://www.nomadproject.io/docs/configuration#general-parameters) added to this directory will append to the configuration, in lexical order. 
+It means that by adding the file `00-override.hcl` will be read first and the file `99-override.hcl` you will ensure it will be read last.
 
 ## Example `98-template-plugin.hcl`
 ```hcl
@@ -16,4 +13,4 @@ client {
 }
 ```
 
-See [example](../../../../template_example/dev/vagrant/conf/nomad/99-override.hcl)
+A example file is provided in [template_example/dev/vagrant/conf/nomad](https://github.com/fredrikhgrelland/vagrant-hashistack-template/tree/master/template_example/dev/vagrant/conf/nomad).

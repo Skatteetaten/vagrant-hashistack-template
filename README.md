@@ -23,6 +23,7 @@
 </p>
 
 ## Content
+0. [Getting started](#getting-started)
 1. [Description - What & Why](#description---what--why)
    1. [Why Does This Exist?](#why-does-this-exist)
    2. [Services](#services)
@@ -64,6 +65,10 @@
    2. [Testing the module](#testing-the-module)
 6. [If This Is in Your Own Repository](#if-this-is-in-your-own-repository)
 
+## Getting started
+If you are familliar with the template you can get started by jumping straight to the [Usage](#usage) section.
+
+If you are new to the template we strongly recommend you to carefully read all the sections in this readme before you use this template. 
 
 ## Description - What & Why
 This template is a starting point, and example, on how to take advantage of the [Hashistack vagrant-box](https://app.vagrantup.com/fredrikhgrelland/boxes/hashistack) to create, develop, and test Terraform-modules within the Hashistack ecosystem.
@@ -73,11 +78,10 @@ This template is a starting point, and example, on how to take advantage of the 
 
 > :bulb: If you found this in `fredrikhgrelland/vagrant-hashistack`, you may be interested in the separate repository [vagrant-hashistack-template](https://github.com/fredrikhgrelland/vagrant-hashistack-template/).  
 > :warning: If you are reading this in your own repository, go to [If This Is in Your Own Repository](#if-this-is-in-your-own-repository)
-> :warning: There are getting started guides in [`getting_started_vagrantbox.md`](/getting_started_vagrantbox.md) and [`getting_started_modules.md`](/getting_started_modules.md)
+> :warning: There are getting started guides in [`getting_started_vagrantbox.md`](GETTING_STARTED/getting_started_vagrantbox.md) and [`getting_started_modules.md`](GETTING_STARTED/getting_started_modules.md)
 
 ### Why Does This Exist?
  This template aims to standardize workflow for building and testing terraform-nomad-modules, using the [fredrikhgrelland/hashistack](https://github.com/fredrikhgrelland/vagrant-hashistack) vagrant-box.
-
 
 ### Services
 The default box will start Nomad, Vault, Consul and MinIO bound to loopback and advertising on the IP `10.0.3.10`, which should be available on your local machine.
@@ -159,7 +163,6 @@ The command, will install:
 `NB` _Post installation you might need to reboot your system in order to start the virtual-provider (VirtualBox)_
 
 ---
-
 
 ## Configuration
 
@@ -323,8 +326,8 @@ to the bottom of your [Vagrantfile](Vagrantfile), and change `vb.memory` and `vb
 
 ### Getting started
 There are two "Getting started" guides:
-1. [`getting_started_modules.md`](getting_started_modules.md), will guide you through how to create a terraform module with this template.
-2. [`getting_started_vagrantbox.md`](getting_started_vagrantbox.md), will guide you through how to use the vagrantbox, geared towards those using the box to develop terraform modules.
+1. [`getting_started_modules.md`](GETTING_STARTED/getting_started_modules.md), will guide you through how to create a terraform module with this template.
+2. [`getting_started_vagrantbox.md`](GETTING_STARTED/getting_started_vagrantbox.md), will guide you through how to use the vagrantbox, geared towards those using the box to develop terraform modules.
 
 ### Commands
 There are several commands that help to run the vagrant-box:

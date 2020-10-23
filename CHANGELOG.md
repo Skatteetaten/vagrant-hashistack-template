@@ -3,13 +3,17 @@
 ## [0.1.0 UNRELEASED]
 
 ### Added
-
 - Added github templates for issues and PR #55
 - Added healthcheck for countdash nomad job #56
+- All folders contains a README.md with fitting description [no issue]
 
 ### Changed
+- Updated to fit hashistack v0.6.0
+- Updated READMEs to fit vagrant box 0.6.x #52
+- Moved getting started guides in own folder and did a small restructure in README_template.md [no issue]
 
-- updated to fit hashistack v0.6.0
+### Fixed
+- Fixed broken links in READMEs #65
 
 ## [0.0.1 UNRELEASED]
 
