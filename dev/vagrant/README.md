@@ -8,5 +8,5 @@ The inner layer is the procedure where you can override the hashistack configura
 See the the README in the [conf](conf) folder for more information.
 
 ## Outer layer ( advanced )
-The outer layer is where you can customize the startup procedure of the Hashistack with pre- and post start Ansible scripts.
+The outer layer is where you can customize `pre-` and `post` startup procedures of the services (vault, consul, nomad) using Ansible scripts.
 See the the README in [bootstrap](bootstrap) folder for more information.
