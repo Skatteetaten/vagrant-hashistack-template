@@ -9,7 +9,7 @@ docker build -t my_image:local .
 ```
 
 This image can be built and operated behind a corporate proxy where the base os needs to trust a custom CA.
-While building locally using the Makefile, you may set the environment variable CUSTOM_CA to a custom .crt file in order to import it into the docker image. 
+While building locally using the Makefile, you may set the environment variable CUSTOM_CA to a custom `.crt` or `.pem` file in order to import it into the docker image. 
 See [conf/certificates](conf/certificates).
 
 Furthermore, you can take a look at the example in [template_example/docker/Dockerfile](https://github.com/fredrikhgrelland/vagrant-hashistack-template/blob/master/template_example/docker/Dockerfile) 
