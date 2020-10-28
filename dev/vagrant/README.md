@@ -1,5 +1,5 @@
 # Vagrant 
-In this directory you can override and/or create new configuration for the Hashistack Vagrant box.
+In this directory, you can override and/or create a new configuration for the Hashistack Vagrant box services (vault, consul, nomad).
 
 There are two layers of configuration built into the box - the [*inner layer*](#inner-layer--easy-) and [*outer layer*](#outer-layer--advanced-).
 
