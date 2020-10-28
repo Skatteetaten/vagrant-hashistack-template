@@ -6,7 +6,7 @@ we use Ansible-playbooks to create consul intentions, build a docker image, init
 
 ## :warning: Note
 There is two things to note in the example:
-- The playbooks in the example is numbered to run in a specific sequence, where numbered `00-<name>.yml` will run first and `99-<name>.yml` run last.
+- The playbooks in the example run in a specific sequence (in alphanumeric order). We use numbers as a prefix to make order explicit, where numbered `00-<name>.yml` will run first and `99-<name>.yml` run last.
 - Since [`playbook.yml`](playbook.yml) contains the main structure, all additional playbooks only need to include pure Ansible task syntax as seen bellow.
 
 ```yaml
