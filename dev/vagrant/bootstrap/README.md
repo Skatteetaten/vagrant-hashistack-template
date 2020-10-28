@@ -6,7 +6,7 @@ Doing this, you need to provide the same folder structure as in the provided exa
 
 ## :warning: Note
 There is two things to note in the example:
-- The playbooks in the example is numbered to run in a specific sequence, where numbered `00-<name>.yml` will run first and `99-<name>.yml` run last.
+- The playbooks in the example are numbered to run in a specific sequence (alphanumeric order), where numbered `00-<name>.yml` will run first and `99-<name>.yml` run last.
 - All additional playbooks only need to include pure Ansible task syntax as seen bellow.
 
 ```yaml
