@@ -52,7 +52,7 @@ A description of the providers that the module uses. E.g. "This module uses the 
 |      |             | bool |
 
 ## Example
-Example-code that shows how to use the module, and, if applicable, it's different use cases.
+Example-code that shows how to use the module and, if applicable, its different use cases.
 ```hcl-terraform
 module "example"{
   source = "./"
