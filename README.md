@@ -68,7 +68,11 @@
 ## Getting started
 If you are familliar with the template you can get started by jumping straight to the [Usage](#usage) section.
 
-If you are new to the template we strongly recommend you to carefully read all the sections in this readme before you use this template. 
+If you are new to the template we strongly recommend you to read the [Description - What & Why](#description---what--why), then perform the steps in [Install Prerequisites](#install-prerequisites). After that you can move on to our getting started guides:
+
+- [`getting_started_vagrantbox.md`](GETTING_STARTED/getting_started_vagrantbox.md)
+- [`getting_started_modules.md`](GETTING_STARTED/getting_started_modules.md)
+
 
 ## Description - What & Why
 This template is a starting point, and example, on how to take advantage of the [Hashistack vagrant-box](https://app.vagrantup.com/fredrikhgrelland/boxes/hashistack) to create, develop, and test Terraform-modules within the Hashistack ecosystem.
