@@ -1,6 +1,6 @@
 # Dev
 This directory contains code related to building, testing and developing in the vagrant box. The code is organized in two separate folders and a `.env` file.
-See the following folders READMEs to learn more:
+See the following folders' READMEs to learn more:
 - [ansible](ansible/README.md)
 - [vagrant](vagrant/README.md)
 
