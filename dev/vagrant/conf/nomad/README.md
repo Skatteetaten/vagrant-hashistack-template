@@ -1,7 +1,7 @@
 # Nomad configuration 
 You may add any `.hcl` or `.json` -files to this directory in order to change or override the configuration.
 Any valid [nomad configuration](https://www.nomadproject.io/docs/configuration#general-parameters) added to this directory will append to the configuration, in lexical order. 
-It means that by adding the file `00-override.hcl` will be read first and the file `99-override.hcl` you will ensure it will be read last.
+It means that by prefixing a filename with `00` (e.g. `00-override.hcl`), it will be read first and using `99` (e.g. `99-override.hcl`) it will be read last.
 
 ## Example `98-template-plugin.hcl`
 ```hcl
