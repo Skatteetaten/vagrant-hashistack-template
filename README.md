@@ -129,6 +129,8 @@ This will enable the autocorrect-feature on the ports used by consul, nomad, and
 
 > :bulb: You can find out more about Vagrantfiles [here](https://www.vagrantup.com/docs/vagrantfile)
 
+> :warning: Note that using auto_correct WILL change your ports, meaning _nothing_ will work as expected at this point in time, because all ports are hardcoded
+
 ## Install Prerequisites
 
 ```text
