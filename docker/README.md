@@ -4,7 +4,6 @@ Put your Dockerfile and other files relating to a docker-build here.
 ## Building docker image locally
 If you have docker installed on your machine, you may want to build the image locally:
 ```sh
-cd docker
 docker build -t my_image:local .
 ```
 
