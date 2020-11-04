@@ -8,7 +8,7 @@
 - All folders contains a README.md with fitting description [no issue]
 
 ### Changed
-- Updated to fit hashistack v0.6.0
+- Updated to fit hashistack v0.7.0 #66
 - Updated READMEs to fit vagrant box 0.6.x #52
 - Moved getting started guides in own folder and did a small restructure in README_template.md [no issue]
 
