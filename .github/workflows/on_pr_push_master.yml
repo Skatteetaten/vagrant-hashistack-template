@@ -68,9 +68,9 @@ jobs:
         run: |
           if [ "$test_consul_acl" == 'consul_acl_enabled' ]
           then
-              "ENVKEY_consul_acl=true" >> $GITHUB_ENV
+              echo "ENVKEY_consul_acl=true" >> $GITHUB_ENV
           else
-              "ENVKEY_consul_acl=false" >> $GITHUB_ENV
+              echo "ENVKEY_consul_acl=false" >> $GITHUB_ENV
           fi
         env:
           test_consul_acl: ${{ matrix.consul_acl }}
@@ -80,9 +80,9 @@ jobs:
         run: |
           if [ "$test_consul_acl_default_policy" == 'consul_acl_allow' ]
           then
-              "ENVKEY_consul_acl_default_policy=allow" >> $GITHUB_ENV
+              echo "ENVKEY_consul_acl_default_policy=allow" >> $GITHUB_ENV
           else
-              "ENVKEY_consul_acl_default_policy=deny" >> $GITHUB_ENV
+              echo "ENVKEY_consul_acl_default_policy=deny" >> $GITHUB_ENV
           fi
         env:
           test_consul_acl_default_policy: ${{ matrix.consul_acl_default_policy }}
@@ -92,9 +92,9 @@ jobs:
         run: |
           if [ "$test_nomad_acl" == 'nomad_acl_enabled' ]
           then
-              "ENVKEY_nomad_acl=true" >> $GITHUB_ENV
+              echo "ENVKEY_nomad_acl=true" >> $GITHUB_ENV
           else
-              "ENVKEY_nomad_acl=false" >> $GITHUB_ENV
+              echo "ENVKEY_nomad_acl=false" >> $GITHUB_ENV
           fi
         env:
           test_nomad_acl: ${{ matrix.nomad_acl }}
