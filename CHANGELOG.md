@@ -6,7 +6,6 @@
 - Added github templates for issues and PR #55
 - Added healthcheck for countdash nomad job #56
 - All folders contains a README.md with fitting description [no issue]
-- Added cancel-reduntant-jobs to workflow [no issue]
 
 ### Changed
 - Updated to fit hashistack v0.7.0 #66
