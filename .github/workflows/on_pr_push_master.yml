@@ -7,12 +7,6 @@ on:
     branches: [ master ]
 
 jobs:
-  cancel-redundant-jobs:
-    runs-on: ubuntu-latest
-    steps:
-      # Use this GitHub Actions at least once in this workflow as soon as possible.
-      - uses: technote-space/auto-cancel-redundant-job@v1
-
   linter:
     runs-on: ubuntu-latest
     steps:
