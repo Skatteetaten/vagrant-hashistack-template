@@ -1,7 +1,7 @@
 data "vault_generic_secret" "nomad_secret_id" {
   # Set count of this data source to 1 if ACLs are enabled in Nomad, and 0 if not
   count = var.nomad_acl ? 1 : 0
-  path  = "nomad/creds/producer"
+  path  = "nomad/creds/producer-role"
 }
 
 provider "nomad" {
