@@ -114,7 +114,7 @@ jobs:
         run: python .github/action/create-env.py
         env:
           ENVKEY_env_override: true
-          FILE_NAME: template/template_example/.env_override
+          FILE_NAME: template_example/.env_override
 
       - name: Run make template_example
         if: github.repository == 'fredrikhgrelland/vagrant-hashistack-template'
