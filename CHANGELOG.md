@@ -11,6 +11,7 @@
 - Updated to fit hashistack v0.7.0 #66
 - Updated READMEs to fit vagrant box 0.6.x #52
 - Moved getting started guides in own folder and did a small restructure in README_template.md [no issue]
+- Changed set-env to environment files #68
 
 ### Fixed
 - Fixed broken links in READMEs #65

@@ -62,9 +62,9 @@ jobs:
         run: |
           if [ "$test_consul_acl" == 'consul_acl_enabled' ]
           then
-              echo "::set-output name=consul_acl::true"
+              echo "ENVKEY_consul_acl=true" >> $GITHUB_ENV
           else
-              echo "::set-output name=consul_acl::false"
+              echo "ENVKEY_consul_acl=false" >> $GITHUB_ENV
           fi
         env:
           test_consul_acl: ${{ matrix.consul_acl }}
@@ -74,9 +74,9 @@ jobs:
         run: |
           if [ "$test_consul_acl_default_policy" == 'consul_acl_allow' ]
           then
-              echo "::set-output name=default_policy::allow"
+              echo "ENVKEY_consul_acl_default_policy=allow" >> $GITHUB_ENV
           else
-              echo "::set-output name=default_policy::deny"
+              echo "ENVKEY_consul_acl_default_policy=deny" >> $GITHUB_ENV
           fi
         env:
           test_consul_acl_default_policy: ${{ matrix.consul_acl_default_policy }}
@@ -86,9 +86,9 @@ jobs:
         run: |
           if [ "$test_nomad_acl" == 'nomad_acl_enabled' ]
           then
-              echo "::set-output name=nomad_acl::true"
+              echo "ENVKEY_nomad_acl=true" >> $GITHUB_ENV
           else
-              echo "::set-output name=nomad_acl::false"
+              echo "ENVKEY_nomad_acl=false" >> $GITHUB_ENV
           fi
         env:
           test_nomad_acl: ${{ matrix.nomad_acl }}
@@ -98,13 +98,13 @@ jobs:
         run: |
           if [ "$test_hashicorp_binary" == 'hashicorp_oss' ]
           then
-              echo "::set-output name=consul_enterprise::false"
-              echo "::set-output name=nomad_enterprise::false"
-              echo "::set-output name=vault_enterprise::false"
+              echo "ENVKEY_consul_enterprise=false" >> $GITHUB_ENV
+              echo "ENVKEY_nomad_enterprise=false" >> $GITHUB_ENV
+              echo "ENVKEY_vault_enterprise=false" >> $GITHUB_ENV
           else
-              echo "::set-output name=consul_enterprise::true"
-              echo "::set-output name=nomad_enterprise::true"
-              echo "::set-output name=vault_enterprise::true"
+              echo "ENVKEY_consul_enterprise=true" >> $GITHUB_ENV
+              echo "ENVKEY_nomad_enterprise=true" >> $GITHUB_ENV
+              echo "ENVKEY_vault_enterprise=true" >> $GITHUB_ENV
           fi
         env:
           test_hashicorp_binary: ${{ matrix.hashicorp_binary }}
@@ -114,12 +114,6 @@ jobs:
         run: python .github/action/create-env.py
         env:
           ENVKEY_env_override: true
-          ENVKEY_consul_acl: ${{ steps.consul_acl.outputs.consul_acl }}
-          ENVKEY_consul_acl_default_policy: ${{ steps.consul_acl_default_policy.outputs.default_policy }}
-          ENVKEY_nomad_acl: ${{ steps.nomad_acl.outputs.nomad_acl }}
-          ENVKEY_consul_enterprise: ${{ steps.hashicorp_binary.outputs.consul_enterprise }}
-          ENVKEY_nomad_enterprise: ${{ steps.hashicorp_binary.outputs.nomad_enterprise }}
-          ENVKEY_vault_enterprise: ${{ steps.hashicorp_binary.outputs.vault_enterprise }}
           FILE_NAME: template_example/.env_override
 
       - name: Run make template_example
@@ -131,12 +125,6 @@ jobs:
         run: python .github/action/create-env.py
         env:
           ENVKEY_env_override: true
-          ENVKEY_consul_acl: ${{ steps.consul_acl.outputs.consul_acl }}
-          ENVKEY_consul_acl_default_policy: ${{ steps.consul_acl_default_policy.outputs.default_policy }}
-          ENVKEY_nomad_acl: ${{ steps.nomad_acl.outputs.nomad_acl }}
-          ENVKEY_consul_enterprise: ${{ steps.hashicorp_binary.outputs.consul_enterprise }}
-          ENVKEY_nomad_enterprise: ${{ steps.hashicorp_binary.outputs.nomad_enterprise }}
-          ENVKEY_vault_enterprise: ${{ steps.hashicorp_binary.outputs.vault_enterprise }}
           FILE_NAME: .env_override
 
       - name: Run make test
