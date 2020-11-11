@@ -15,6 +15,7 @@
 
 ### Fixed
 - Fixed broken links in READMEs #65
+- Box can receive ansible arguments #57
 
 ## [0.0.1 UNRELEASED]
 
