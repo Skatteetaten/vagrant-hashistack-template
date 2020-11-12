@@ -12,10 +12,12 @@
 - Updated READMEs to fit vagrant box 0.6.x #52
 - Moved getting started guides in own folder and did a small restructure in README_template.md [no issue]
 - Changed set-env to environment files #68
+- Tflinter `terraform_required_providers` set to false #14
 
 ### Fixed
 - Fixed broken links in READMEs #65
 - Box can receive ansible arguments #57
+- Moved .env to dev/ folder #64
 
 ## [0.0.1 UNRELEASED]
 
