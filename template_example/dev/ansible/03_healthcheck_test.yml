@@ -1,6 +1,6 @@
 - name: set variable
   set_fact:
-    consul_token: "master"
+    consul_token: "{{ lookup('env', 'consul_master_token') }}"
   tags: test
 
 - name: countdash healthcheck test without consul token (when consul acl default policy is allow)
@@ -33,8 +33,8 @@
     - lookup('env', 'consul_acl') | bool
     - lookup('env', 'consul_acl_default_policy') == 'deny'
   register: result_countdashboard
-  retries: 1
-  delay: 1
+  retries: 15
+  delay: 15
   until:
     - result_countdashboard.json | length == 1
     - '"warning" not in result_countdashboard | string'
