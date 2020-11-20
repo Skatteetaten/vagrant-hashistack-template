@@ -12,7 +12,8 @@ provider "nomad" {
 
 provider "vault" {
   address = "http://127.0.0.1:8200"
-  token   = "master"
+  # Terraform imports TF_VAR_vault_master_token from the box env
+  token   = var.vault_master_token
 }
 
 terraform {
