@@ -72,6 +72,7 @@ If you are new to the template we strongly recommend you to read the [Descriptio
 
 - [`getting_started_vagrantbox.md`](GETTING_STARTED/getting_started_vagrantbox.md)
 - [`getting_started_modules.md`](GETTING_STARTED/getting_started_modules.md)
+- [`tutorials.md`](GETTING_STARTED/tutorials.md)
 
 
 ## Description - What & Why
