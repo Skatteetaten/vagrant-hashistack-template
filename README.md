@@ -23,7 +23,7 @@
 </p>
 
 ## Content
-0. [Getting started](#getting-started)
+0. [Quick start](#quick-start)
 1. [Description - What & Why](#description---what--why)
    1. [Why Does This Exist?](#why-does-this-exist)
    2. [Services](#services)
@@ -65,14 +65,30 @@
    2. [Testing the module](#testing-the-module)
 6. [If This Is in Your Own Repository](#if-this-is-in-your-own-repository)
 
-## Getting started
-If you are familliar with the template you can get started by jumping straight to the [Usage](#usage) section.
+## Quick start
+> :warning: If you are new to the template we strongly recommend you to read the [Description - What & Why](#description---what--why), then perform the steps in [Install Prerequisites](#install-prerequisites). After that you can move on to our getting started guides in the [getting started](#getting-started) section.
 
-If you are new to the template we strongly recommend you to read the [Description - What & Why](#description---what--why), then perform the steps in [Install Prerequisites](#install-prerequisites). After that you can move on to our getting started guides:
+You can quickly get started by following the bellow steps:
+1. Create your own repository by pressing [Use this template](https://github.com/fredrikhgrelland/vagrant-hashistack-template/generate) button.
+2. Clone the repository you just created to your machine.
+3. Now, run `make template_init` to clean your repository for unnessesary files and folders.
+4. You are now all set to start developing you module!
 
-- [`getting_started_vagrantbox.md`](GETTING_STARTED/getting_started_vagrantbox.md)
-- [`getting_started_modules.md`](GETTING_STARTED/getting_started_modules.md)
+Here is a overview of the folders and files you need to know to quickly get you started:
+```sh
+├── example        <------------------------ Your example(s) of module usage goes here
+├── nomad          <------------------------ All Nomad job files goes here (.hcl)
+├── main.tf        <------------------------ All your resources goes here (e.g. importing and rendering your Nomad job file)
+├── outputs.tf     <------------------------ Your output variables (if any)
+├── variables.tf   <------------------------ Your input variables (if any)
+└── README.md      <------------------------ Documentation of your module
+```
 
+:information_source: After step 3, this readme will be available in [.github/template_specific](.github/template_specific) as `old_README.md`.
+
+**:warning: Note**  
+If you are new to the template we strongly recommend you to read the [Description - What & Why](#description---what--why), then perform the steps in [Install Prerequisites](#install-prerequisites).
+After that you can move on to the [Usage](#usage) section.
 
 ## Description - What & Why
 This template is a starting point, and example, on how to take advantage of the [Hashistack vagrant-box](https://app.vagrantup.com/fredrikhgrelland/boxes/hashistack) to create, develop, and test Terraform-modules within the Hashistack ecosystem.
@@ -351,6 +367,8 @@ There are several commands that help to run the vagrant-box:
 
 - `make template_example` runs the example in [template_example/](template_example).
 
+- `make template_init` will clean out the template for you to get started with the module developement.
+
 - `make pre-commit` this is a helper command that will run the github linter locally and formatt/prettify all the `.tf` files in the directory.
 
 > :bulb: For full info, check [`template/Makefile`](./Makefile).
@@ -515,6 +533,3 @@ As of today, the following tests are executed:
 |    test (consul_acl_disabled, consul_acl_deny, nomad_acl_disabled, hashicorp_enterprise)   |  false      |  deny               |  false        | enterprise      |
 
 The latest test results can be looked up under the **Actions** tab.
-
-## If This Is in Your Own Repository
-If you are reading this from your own repository you should _delete_ this `README.md`, fill out `README_template.md`, and rename `README_template.md` to `README.md`.
