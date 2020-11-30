@@ -367,7 +367,7 @@ There are several commands that help to run the vagrant-box:
 
 - `make template_example` runs the example in [template_example/](template_example).
 
-- `make template_init` will clean out the template for you to get started with the module developement.
+- `make template_init` will clean out the template for you to get started with the module development.
 
 - `make pre-commit` this is a helper command that will run the github linter locally and formatt/prettify all the `.tf` files in the directory.
 
