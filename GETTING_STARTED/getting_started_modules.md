@@ -56,7 +56,7 @@ All directories have their own uses, detailed below:
 
 #### 0. Creating A Repository
 Before we begin you need to create your own repository. Do that by pressing [Use this template](https://github.com/fredrikhgrelland/vagrant-hashistack-template/generate).
-Clone your reposetory and run `make template_init` to clean your template for all unnecessary files and folders.
+Clone your repository and run `make template_init` to clean your template for all unnecessary files and folders.
 **:warning: Keep in mind that `template_init` will move all the getting started guides and the root README to [.github/template_specific](https://github.com/fredrikhgrelland/vagrant-hashistack-template/tree/master/.github/template_specific).**
 
 The rest of the steps for this guide should be done inside your own repository.
