@@ -72,7 +72,7 @@ You can quickly get started by following the bellow steps:
 1. Create your own repository by pressing [Use this template](https://github.com/fredrikhgrelland/vagrant-hashistack-template/generate) button.
 2. Clone the repository you just created to your machine.
 3. Now, run `make template_init` to clean your repository for unnessesary files and folders.
-4. You are now all set to start developing you module!
+4. You are now all set to start developing your module!
 
 Here is a overview of the folders and files you need to know to quickly get you started:
 ```sh
