@@ -43,16 +43,16 @@ Any other?
 2. Software 2
 
 ### Other
-Any other requirements? E.g. "This needs to be run on a Debian system"
+Any other requirements?
 
 ## Usage
 A description of how to run and use the module.
 
 ### Verifying setup
-Description of expected end result and how to check it. E.g. "After a successful run Presto should be available at localhost:8080".
+Description of expected end result and how to check it.
 
 ### Providers
-A description of the providers that the module uses. E.g. "This module uses the [Nomad](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs) and [Vault](https://registry.terraform.io/providers/hashicorp/vault/latest/docs) providers"
+A description of the providers that the module uses.
 
 ## Example usage
 Example-code that shows how to use the module and, if applicable, its different use cases.
