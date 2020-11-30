@@ -8,7 +8,9 @@ Here you can find hands-on tutorials and tips for working with Github and the Va
 
 ## How to release [VIDEO]
 The release process is pretty simple. The only thing you have to do is to create a new branch (e.g. `release_0.3.0`),
-and remove the tag `UNRELEASED` in the CHANGELOG.md file. See the video bellow for a full walk through:
+and remove the tag `UNRELEASED` in the CHANGELOG.md file.
+When creating the pull request you need to lable it with `major`, `minor`, or `patch`, according to your release.
+See the video bellow for a full walk through:
 
 [release  **[duration: 1m 36s]**](https://youtu.be/6OHKloM-rL4)
 
