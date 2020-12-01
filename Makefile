@@ -79,7 +79,7 @@ pre-commit: check_for_docker_binary check_for_terraform_binary
 	terraform fmt -recursive && echo "\e[32mTrying to prettify all .tf files.\e[0m"
 
 ###################################
-######## Template spesific ########
+######## Template specific ########
 ###################################
 template_example: custom_ca
 ifeq ($(GITHUB_ACTIONS),true) # Always set to true when GitHub Actions is running the workflow. You can use this variable to differentiate when tests are being run locally or by GitHub Actions.
