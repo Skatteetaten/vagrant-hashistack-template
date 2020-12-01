@@ -68,10 +68,10 @@
 ## Quick start
 > :warning: If you are new to the template we strongly recommend you to read the [Description - What & Why](#description---what--why), then perform the steps in [Install Prerequisites](#install-prerequisites). After that you can move on to our getting started guides in the [getting started](#getting-started) section.
 
-You can quickly get started by following the bellow steps:
+You can quickly get started by following the below steps:
 1. Create your own repository by pressing [Use this template](https://github.com/fredrikhgrelland/vagrant-hashistack-template/generate) button.
 2. Clone the repository you just created to your machine.
-3. Now, run `make template_init` to clean your repository for unnessesary files and folders.
+3. Now, run `make template_init` to clean your repository for unnecessary files and folders.
 4. You are now all set to start developing your module!
 
 Here is a overview of the folders and files you need to know to quickly get you started:
