@@ -43,8 +43,7 @@ The steps we are going to walk through are as follows:
 All directories have their own uses, detailed below:
 
 ```text
-├── conf
-│   └── nomad #----------------------- All nomad job files should go here
+├── nomad #--------------------------- All nomad job files should go here
 ├── dev
 │   ├── ansible #--------------------- All playbooks
 │   └── vagrant #--------------------- All box spesific jobs
@@ -57,6 +56,9 @@ All directories have their own uses, detailed below:
 
 #### 0. Creating A Repository
 Before we begin you need to create your own repository. Do that by pressing [Use this template](https://github.com/fredrikhgrelland/vagrant-hashistack-template/generate).
+Clone your repository and run `make template_init` to clean your template for all unnecessary files and folders.
+**:warning: Keep in mind that `make template_init` will move all the getting started guides and the root README to [.github/template_specific](https://github.com/fredrikhgrelland/vagrant-hashistack-template/tree/master/.github/template_specific).**
+
 The rest of the steps for this guide should be done inside your own repository.
 
 #### 1. Building Docker Image
