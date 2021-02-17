@@ -4,6 +4,30 @@ export PATH := $(shell pwd)/tmp:$(PATH)
 .ONESHELL .PHONY: up update-box destroy-box remove-tmp clean example
 .DEFAULT_GOAL := up
 
+###################################
+########## Color Scheme ###########
+###################################
+ifneq (,$(findstring xterm,${TERM}))
+	BLACK        := $(shell tput -Txterm setaf 0)
+	RED          := $(shell tput -Txterm setaf 1)
+	GREEN        := $(shell tput -Txterm setaf 2)
+	YELLOW       := $(shell tput -Txterm setaf 3)
+	LIGHTPURPLE  := $(shell tput -Txterm setaf 4)
+	PURPLE       := $(shell tput -Txterm setaf 5)
+	BLUE         := $(shell tput -Txterm setaf 6)
+	WHITE        := $(shell tput -Txterm setaf 7)
+	RESET := $(shell tput -Txterm sgr0)
+else
+	BLACK        := ""
+	RED          := ""
+	GREEN        := ""
+	YELLOW       := ""
+	LIGHTPURPLE  := ""
+	PURPLE       := ""
+	BLUE         := ""
+	WHITE        := ""
+	RESET        := ""
+endif
 
 ###################################
 ########## Development ############
@@ -90,28 +114,32 @@ else
 endif
 
 template_init:
-	@echo "\e[91m\nWarning! This will clean your template. Do you want to continue? [y/n]\e[0m" && read answer
-	if [ "$$answer" != "y" ]; then echo "Aborting!" && exit; fi
+	# 
+	@echo "${RED}\nWarning! This will clean your template. Do you want to continue? [y/n]${RESET}" ; \
+	read answer; \
+	if [ "$$answer" != "y" ]; then \
+		echo "Aborting!" ; \
+		exit 1 ; \
+	fi 
 
-	@echo "\nStarting to clean your template!\n\e[0m"
+	@echo "\nStarting to clean your template!" 
 
-	for folder in "template_example" "example/vagrant_box_example" "CHANGELOG.md"
-	do
-		echo -n "Deleting: $$folder "
-		rm -rf $$folder && echo "\e[32mSuccess\e[0m" || echo "\e[91mFailed\e[0m"
+	@for folder in "template_example" "example/vagrant_box_example" "CHANGELOG.md" ; do \
+		echo "Deleting: $$folder " ; \
+		rm -rf $$folder && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}" ; \
 	done
 
-	@echo -n "\nMoving README.md to .github/template_specific as old_README.md "
-	mv README.md .github/template_specific/old_README.md && echo "\e[32mSuccess\e[0m" || echo "\e[91mFailed\e[0m"
+	@echo "\nMoving README.md to .github/template_specific as old_README.md" 
+	@mv README.md .github/template_specific/old_README.md && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
 
-	@echo -n "Moving GETTING_STARTED/ to .github/template_specific/GETTING_STARTED "
-	mv GETTING_STARTED .github/template_specific/ && echo "\e[32mSuccess\e[0m" || echo "\e[91mFailed\e[0m"
+	@echo "Moving GETTING_STARTED/ to .github/template_specific/GETTING_STARTED"
+	@mv GETTING_STARTED .github/template_specific/ && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
 
-	@echo -n "\nCreating a clean README.md "
-	cat .github/template_specific/README_template.md >> README.md && echo "\e[32mSuccess\e[0m" || echo "\e[91mFailed\e[0m"
+	@echo "\nCreating a clean README.md"
+	@cat .github/template_specific/README_template.md >> README.md && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
 
-	@echo -n "Creating a clean CHANGELOG.md "
-	echo "# Changelog\n\n## 0.0.1 [UNNRELEASED]\n\n###Added\n\n###Changed\n\n###Fixed\n" >> CHANGELOG.md && echo "\e[32mSuccess\e[0m" || echo "\e[91mFailed\e[0m"
+	@echo "Creating a clean CHANGELOG.md "
+	@echo "# Changelog\n\n## 0.0.1 [UNNRELEASED]\n\n###Added\n\n###Changed\n\n###Fixed\n" >> CHANGELOG.md && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
 
-	@echo "\e[32m\nDone! You are all set to start developing!\e[0m"
-	@echo "\e[93m\nPS! If you want to keep a deleted folder, you can undo by running:\n  git reset HEAD <file/folder>\n  git checkout -- <file/folder>\e[0m"
+	@echo "${BLUE}\nDone! You are all set to start developing!${RESET}"
+	@echo "${YELLOW}\nPS! If you want to keep a deleted folder, you can undo by running:\n  git reset HEAD <file/folder>\n  git checkout -- <file/folder>${RESET}"
