@@ -6,7 +6,7 @@
 - Moved colour definitions of ‘template_init’ recipe into variables. [no issue]
 
 ### Fixed
-- bug where 'make template_init' would crash on error #2 EOF.
+- bug where 'make template_init' would crash on End of File error. [Issue #92]
 
 ## [0.1.0 UNRELEASED]
 
