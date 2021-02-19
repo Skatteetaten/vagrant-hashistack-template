@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.1 UNRELEASED]
+
+### Added
+- Colour Scheme as ad hoc variables instead of inline ad lib. 
+
+### Changed
+- Colours in 'make template_init' termplate text output 
+
+### Fixed
+- bug where 'make template_inti' would crash on error #2 EOF.
 ## [0.1.0 UNRELEASED]
 
 ### Added
