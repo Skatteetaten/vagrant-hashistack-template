@@ -8,25 +8,31 @@ export PATH := $(shell pwd)/tmp:$(PATH)
 ########## Color Scheme ###########
 ###################################
 ifneq (,$(findstring xterm,${TERM}))
-	BLACK        := $(shell tput -Txterm setaf 0)
-	RED          := $(shell tput -Txterm setaf 1)
-	GREEN        := $(shell tput -Txterm setaf 2)
-	YELLOW       := $(shell tput -Txterm setaf 3)
-	LIGHTPURPLE  := $(shell tput -Txterm setaf 4)
-	PURPLE       := $(shell tput -Txterm setaf 5)
-	BLUE         := $(shell tput -Txterm setaf 6)
-	WHITE        := $(shell tput -Txterm setaf 7)
-	RESET := $(shell tput -Txterm sgr0)
+	BLACK        := \033[0;30m
+	RED          := \033[0;31m
+	GREEN        := \033[0;32m
+	ORANGE       := \033[0;33m
+	BLUE         := \033[0;34m
+	PURPLE       := \033[0;35m
+	CYAN         := \033[0;36m
+	LIGHTGREY    := \033[0;37m
+	DARKGREY     := \033[1;30m
+	YELLOW       := \033[1;33m
+	WHITE        := \033[1;37m
+	RESET 		 := \033[0m
 else
 	BLACK        := ""
 	RED          := ""
 	GREEN        := ""
-	YELLOW       := ""
-	LIGHTPURPLE  := ""
-	PURPLE       := ""
+	ORANGE       := ""
 	BLUE         := ""
+	PURPLE       := ""
+	CYAN         := ""
+	LIGHTGREY    := ""
+	DARKGREY     := ""
+	YELLOW       := ""
 	WHITE        := ""
-	RESET        := ""
+	RESET 		 := ""
 endif
 
 ###################################
