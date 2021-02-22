@@ -127,7 +127,7 @@ template_init:
 	@mv GETTING_STARTED .github/template_specific/ && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
 
 	@echo "\nCreating a clean README.md"
-	@cat .github/template_specific/README_template.md >> README.md && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
+	cat .github/template_specific/README_template.md >> README.md && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
 
 	@echo "Creating a clean CHANGELOG.md "
 	@echo "# Changelog\n\n## 0.0.1 [UNNRELEASED]\n\n###Added\n\n###Changed\n\n###Fixed\n" >> CHANGELOG.md && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
