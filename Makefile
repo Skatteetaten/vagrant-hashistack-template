@@ -121,7 +121,7 @@ template_init:
 	done
 
 	@echo "\nMoving README.md to .github/template_specific as old_README.md" 
-	@mv README.md .github/template_specific/old_README.md && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
+	mv README.md .github/template_specific/old_README.md && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
 
 	@echo "Moving GETTING_STARTED/ to .github/template_specific/GETTING_STARTED"
 	@mv GETTING_STARTED .github/template_specific/ && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
