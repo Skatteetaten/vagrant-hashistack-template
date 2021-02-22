@@ -130,7 +130,7 @@ template_init:
 	cat .github/template_specific/README_template.md >> README.md && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
 
 	@echo "Creating a clean CHANGELOG.md "
-	echo "# Changelog\n\n## 0.0.1 [UNNRELEASED]\n\n###Added\n\n###Changed\n\n###Fixed\n" >> CHANGELOG.md && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
+	echo "# Changelog\n\n## 0.0.1 [UNRELEASED]\n\n###Added\n\n###Changed\n\n###Fixed\n" >> CHANGELOG.md && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
 
 	@echo "${BLUE}\nDone! You are all set to start developing!${RESET}"
 	@echo "${YELLOW}\nPS! If you want to keep a deleted folder, you can undo by running:\n  git reset HEAD <file/folder>\n  git checkout -- <file/folder>${RESET}"
