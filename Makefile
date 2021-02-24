@@ -126,7 +126,7 @@ template_init:
 	@echo -n "Moving GETTING_STARTED/ to .github/template_specific/GETTING_STARTED"
 	mv GETTING_STARTED .github/template_specific/ && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
 
-	@echo -n "\nCreating a clean README.md"
+	@echo -n "\nCreating a clean README.md "
 	cat .github/template_specific/README_template.md >> README.md && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
 
 	@echo -n "Creating a clean CHANGELOG.md "
