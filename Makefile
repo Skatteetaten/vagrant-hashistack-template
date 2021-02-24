@@ -120,7 +120,7 @@ template_init:
 		rm -rf $$folder && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}" ; \
 	done
 
-	@echo -n "\nMoving README.md to .github/template_specific as old_README.md" 
+	@echo -n "\nMoving README.md to .github/template_specific as old_README.md " 
 	mv README.md .github/template_specific/old_README.md && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
 
 	@echo -n "Moving GETTING_STARTED/ to .github/template_specific/GETTING_STARTED"
