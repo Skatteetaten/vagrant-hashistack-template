@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1 UNRELEASED]
+
+### Changed
+- Moved colour definitions of ‘template_init’ recipe into variables. [no issue]
+
+### Fixed
+- bug where 'make template_init' would crash on End of File error. [#92](https://github.com/fredrikhgrelland/vagrant-hashistack-template/issues/92)
+
 ## [0.1.0 UNRELEASED]
 
 ### Added
