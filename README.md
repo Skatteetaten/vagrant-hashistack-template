@@ -63,7 +63,6 @@
       1. [Linters](#linters)
       2. [Terraform formatting](#terraform-formatting)
    2. [Testing the module](#testing-the-module)
-6. [If This Is in Your Own Repository](#if-this-is-in-your-own-repository)
 
 ## Quick start
 > :warning: If you are new to the template we strongly recommend you to read the [Description - What & Why](#description---what--why), then perform the steps in [Install Prerequisites](#install-prerequisites). After that you can move on to our getting started guides in the [getting started](#getting-started) section.
@@ -429,7 +428,7 @@ task "web" {
   }
 }
 ```
-[Full example](./template_example/conf/nomad/countdash.hcl)
+[Full example](template_example/nomad/countdash.hcl)
 
 ### Iteration of the Development Process
 

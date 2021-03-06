@@ -3,7 +3,7 @@ Here you can find hands-on tutorials and tips for working with Github and the Va
 
 ## Content
 1. [How to release](#how-to-release-video)
-2. [How to test in vagrant box](#how-to-test-in-vagrant-box-video)
+2. [How to test in vagrant box](#how-to-test-inside-vagrant-box-video)
 3. [How to clean up box](#how-to-clean-up-box-video)
 
 ## How to release [VIDEO]
