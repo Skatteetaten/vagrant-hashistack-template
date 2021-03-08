@@ -7,6 +7,9 @@
 
 ### Fixed
 - bug where 'make template_init' would crash on End of File error. [#92](https://github.com/fredrikhgrelland/vagrant-hashistack-template/issues/92)
+- Link #94
+- Link #95
+- Some links in documentation [no issue]
 
 ## [0.1.0 UNRELEASED]
 

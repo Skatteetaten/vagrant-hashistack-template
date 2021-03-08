@@ -80,8 +80,8 @@ It also has a tight integration with Vault that we will use later.
 > :warning: Skip this step if you are using a pre-made image from [dockerhub](https://hub.docker.com/), or another registry
 
 The image we built in our first step is now available as an image on our local machine, but nomad inside the virtual machine does not have access to that.
-The only way Nomad can use our image is by [fetching it from MinIO](https://github.com/fredrikhgrelland/vagrant-hashistack-template/blob/master/template_example/conf/nomad/countdash.hcl#L35-L36), which means we need to upload it to MinIO somehow.
-From [the MinIO section](/getting_started_vagrantbox.md#2-minio) we know that anything inside `/vagrant` will be made available.
+The only way Nomad can use our image is by [fetching it from MinIO](https://github.com/fredrikhgrelland/vagrant-hashistack-template/blob/master/template_example/nomad/countdash.hcl#L27-L37), which means we need to upload it to MinIO somehow.
+From [the MinIO section](getting_started_vagrantbox.md#2-minio) we know that anything inside `/vagrant` will be made available.
 [This section](/README.md#pushing-resources-to-minio-with-ansible-docker-image) shows how we can use ansible code to get our image in a subfolder of `/vagrant`:
 
 1. create a tmp folder in `/vagrant/dev` inside the box
@@ -90,13 +90,13 @@ From [the MinIO section](/getting_started_vagrantbox.md#2-minio) we know that an
 
 ##### b. Creating a Nomad job
 Next step is to create the Nomad job that deploys our image. 
-This guide will not focus on how to make a Nomad job, but a full example can be found at [template_example/conf/nomad/countdash.hcl](template_example/conf/nomad/countdash.hcl).
-Your nomad-job file should go under `conf/nomad/`. If you made your own docker image see [fetching docker image](#fetching-resources-from-minio-with-nomad-docker-image) on how to use that in your Nomad job. 
+This guide will not focus on how to make a Nomad job, but a full example can be found at [template_example/nomad/countdash.hcl](/template_example/nomad/countdash.hcl).
+Your nomad-job file should go under `nomad/`. If you made your own docker image see [fetching docker image](/template_example/nomad/countdash.hcl#L27-L37) on how to use that in your Nomad job. 
 When the Nomad job-file has been created we can try to run it. 
 We can do this in one of two ways:
 
 1. Log on the machine with `vagrant ssh` and run it with the Nomad-cli available on the virtual machine. Remember that all files inside `/vagrant` are shared with the folder of
- this file, meaning you can go to `/vagrant/conf/nomad` to find your hcl-file. Then run it with `nomad job run <nameofhcl.hcl>`.  
+ this file, meaning you can go to `/vagrant/nomad` to find your hcl-file. Then run it with `nomad job run <nameofhcl.hcl>`.  
 2. If you have the nomad-cli on your local machine you can run it from your local machine directly with `nomad job run <nameofhcl.hcl>`. 
 
 After sending the job to Nomad you can check the status by going to `localhost:4646`. If you see your job running you can go to the next step.
@@ -121,7 +121,7 @@ In our case the only thing our `main.tf` should contain is a resource that takes
 
 ```hcl-terraform
 resource "nomad_job" "countdash" {
-  jobspec = file("${path.module}/conf/nomad/countdash.hcl")
+  jobspec = file("${path.module}/nomad/countdash.hcl")
   detach  = false
 }
 ```
@@ -229,7 +229,7 @@ Go to `localhost:4646` to check if the nomad-job has started running, if it has,
 
 
 ##### b. Using Ansible To Run the Code in the Previous Step On Startup
-In [getting_started_vagrantbox.md](/getting_started_vagrantbox.md) it was mentioned that _all_ ansible tasks put inside `dev/ansible/` will be run when the box starts. 
+In [getting_started_vagrantbox.md](getting_started_vagrantbox.md) it was mentioned that _all_ ansible tasks put inside `dev/ansible/` will be run when the box starts. 
 We can use this to automatically start our module when we run `make up`.
 The ansible code for running terraform code is below.
 Add this to `run-terraform.yml` or another aptly named file.
