@@ -1,15 +1,15 @@
-## The goal of this guide 
+## The goal of this guide
 
 > :warning: Read the section `Description - what & why` in [README.md](/README.md) to get a quick introduction to what this repo is.
 
 The goal of this guide is to give an introduction to the [vagrant hashistack box](https://vagrantcloud.com/fredrikhgrelland/hashistack), its features, and how to use it.
 
 ## What is the vagrant hashistack box
-The vagrant-hashistack box is a virtual machine built with [vagrant](https://www.vagrantup.com/), using the code from [vagrant-hashistack](https://github.com/fredrikhgrelland/vagrant-hashistack/). It aims to simulate a hashistack ecosystem, and with the help of built in switches and services it is able to be tweaked to a user's needs. 
+The vagrant-hashistack box is a virtual machine built with [vagrant](https://www.vagrantup.com/), using the code from [vagrant-hashistack](https://github.com/fredrikhgrelland/vagrant-hashistack/). It aims to simulate a hashistack ecosystem, and with the help of built in switches and services it is able to be tweaked to a user's needs.
 
 > :bulb: **Hashistack**, in current repository context, is a set of software products by [HashiCorp](https://www.hashicorp.com/).
 
-In the context of this template the box solves the problem of setting up a hashistack ecosystem, which is normally tedious and non-trivial, but with the box does it's done with one click.  
+In the context of this template the box solves the problem of setting up a hashistack ecosystem, which is normally tedious and non-trivial, but with the box does it's done with one click.
 
 ### Vagrant box vs your local machine
 It's important to note that your local machine and the running vagrant box (from now on called virtual machine) are two separate entities. The virtual machine is available at the IP `10.0.3.10` and our local machine is available at the IP `127.0.0.1`, or alternatively `localhost`.
@@ -56,15 +56,15 @@ This means you can download any of the binaries, and use them against the servic
 When working with this box we will use a technology called [ansible](https://www.ansible.com/). In short, ansible is a software that logs onto a computer like a normal user, and performs tasks defined in an ansible playbook (example [template_example/dev/ansible/playbook.yml](template_example/dev/ansible/playbook.yml). We will mostly be using this to interact with our virtual machine. In our case _all_ playbooks put inside [dev/ansible/](./dev/ansible/) will be run every time we start the box, and we will utilise this throughout the guide.
 
 ### Making artifacts available inside the box
-As mentioned, the local and virtual machine are separate. To make something from our local machine (for example our code) available to the virtual machine we've got two options: 
+As mentioned, the local and virtual machine are separate. To make something from our local machine (for example our code) available to the virtual machine we've got two options:
 
 #### 1. Synced folder
 As mentioned earlier the virtual machine and local machine have a shared folder. In _all_ vagrant boxes the folder in which the `Vagrantfile` lies will be linked to `/vagrant` inside the box. In our case the `Vagrantfile` is in our root directory, the same as where this `getting_started.md` is.
 
 #### 2. MinIO
-Anything put in MinIO will be available to the virtual machine. Two methods are available to upload to MinIO: 
+Anything put in MinIO will be available to the virtual machine. Two methods are available to upload to MinIO:
 
-- 1. Upload files via the UI at `10.0.3.10:9000`. 
+- 1. Upload files via the UI at `10.0.3.10:9000`.
 - 2. _All_ files put in the root directory (same as this file) will be automatically synced with MinIO
 
 See [pushing docker image](/README.md#pushing-resources-to-minio-with-ansible-docker-image) and [fetching docker image](/README.md#fetching-resources-from-minio-with-nomad-docker-image) for examples on how to upload a docker image.
@@ -72,7 +72,7 @@ We will be using this later in the guide.
 
 
 ### Your First Running Virtual Machine
-As a first step try running 
+As a first step try running
 
 ```bash
 make up

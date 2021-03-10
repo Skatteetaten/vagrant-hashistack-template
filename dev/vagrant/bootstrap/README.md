@@ -1,7 +1,7 @@
-# Bootstrap 
+# Bootstrap
 In this folder you can customize the startup procedure of the Hashistack with pre- and post start ansible scripts.
 
-You may put any number of playbooks in this directory for running ansible commands prior to bootstrapping the hashistack. 
+You may put any number of playbooks in this directory for running ansible commands prior to bootstrapping the hashistack.
 Doing this, you need to provide the same folder structure as in the provided example found in [template_example/dev/vagrant/bootstrap](https://github.com/fredrikhgrelland/vagrant-hashistack-template/tree/master/template_example/dev/vagrant/bootstrap).
 
 ## :warning: Note
