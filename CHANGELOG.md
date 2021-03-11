@@ -1,15 +1,22 @@
 # Changelog
 
-## [0.1.1 UNRELEASED]
+## [0.1.1]
+
+### Added
+- `example_template` logs in to docker registry based on env or config.json
 
 ### Changed
+- Updated to `vagrant-hashistack` version 0.10
 - Moved colour definitions of ‘template_init’ recipe into variables. [no issue]
+- Super-linter is run with excluding-mask, only excluding `TERRAGRUNT` linter
+- Super-linter is run from ghcr.io locally and in github actions
 
 ### Fixed
 - bug where 'make template_init' would crash on End of File error. [#92](https://github.com/fredrikhgrelland/vagrant-hashistack-template/issues/92)
 - Link #94
 - Link #95
 - Some links in documentation [no issue]
+- Linting errors [no issue]
 
 ## [0.1.0 UNRELEASED]
 
@@ -18,6 +25,7 @@
 - Added healthcheck for countdash nomad job #56
 - All folders contains a README.md with fitting description [no issue]
 - Getting started tutorials [no issue]
+- Added option to login to docker registry #467
 
 ### Changed
 - Updated to fit hashistack v0.7.0 #66

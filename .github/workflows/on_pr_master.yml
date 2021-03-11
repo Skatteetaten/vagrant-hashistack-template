@@ -12,25 +12,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Super-Linter
-        uses: github/super-linter@latest
+        uses: github/super-linter@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_ANSIBLE: true
-          VALIDATE_BASH: true
-          VALIDATE_DOCKER_HADOLINT: true
-          VALIDATE_GO: true
-          VALIDATE_HTML: true
-          VALIDATE_JAVA: true
-          VALIDATE_JSON: true
-          VALIDATE_MD: true
-          VALIDATE_OPENAPI: true
-          VALIDATE_PYTHON: true
-          VALIDATE_PYTHON_PYLINT: true
-          VALIDATE_PYTHON_FLAKE8: true
-          VALIDATE_RUBY: true
-          VALIDATE_SQL: true
-          VALIDATE_TERRAFORM: true
-          VALIDATE_XML: true
+          VALIDATE_TERRAGRUNT: false
+
+  docker-auth:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/upload-artifact@v2
+        with:
+          name: docker-config
+          path: ~/.docker/config.json
 
   enforce-changelog:
     runs-on: ubuntu-latest
@@ -124,6 +117,8 @@ jobs:
         if: github.repository != 'fredrikhgrelland/vagrant-hashistack-template'
         run: python .github/action/create-env.py
         env:
+          ENVKEY_CONTAINER_REGISTRY_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          ENVKEY_CONTAINER_REGISTRY_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
           ENVKEY_env_override: true
           FILE_NAME: .env_override
 
