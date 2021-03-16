@@ -1,0 +1,22 @@
+- stat: path=/vagrant/docker/conf/auth/config.json
+  register: docker_auth_file
+
+- name: Create docker home dir
+  file:
+    path: ~/.docker
+    state: directory
+  when: docker_auth_file.stat.exists
+
+- name: Place docker auth file
+  file:
+    src: "{{ docker_auth_file.stat.path }}"
+    path: ~/.docker/config.json
+    state: link
+  when: docker_auth_file.stat.exists
+
+- name: Login to container registry
+  docker_login:
+    registry_url: "{{ lookup('env', 'CONTAINER_REGISTRY_URL') | default('https://index.docker.io/v1/')}}"
+    username: "{{ lookup('env', 'CONTAINER_REGISTRY_USERNAME') }}"
+    password: "{{ lookup('env', 'CONTAINER_REGISTRY_TOKEN') }}"
+  when: not docker_auth_file.stat.exists and (lookup('env', 'CONTAINER_REGISTRY_URL') or lookup('env', 'CONTAINER_REGISTRY_USERNAME'))
