@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/upload-artifact@v2
         with:
-          name: docker-config
+          name: docker-auth
           path: ~/.docker/config.json
 
   enforce-changelog:
@@ -108,6 +108,11 @@ jobs:
         env:
           ENVKEY_env_override: true
           FILE_NAME: template_example/.env_override
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: docker-auth
+          path: docker/conf/auth
 
       - name: Run make template_example
         if: github.repository == 'fredrikhgrelland/vagrant-hashistack-template'

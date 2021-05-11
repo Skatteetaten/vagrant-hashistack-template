@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.2]
+
+### Fixed
+
+- Fix docker auth login for github actions #100
+
 ## [0.1.1]
 
 ### Added
