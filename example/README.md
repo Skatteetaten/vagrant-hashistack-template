@@ -1,5 +1,5 @@
 # This is a terraform module example
-All examples have their own directories, with a `main.tf` that references one or more modules. See [template_example](https://github.com/fredrikhgrelland/vagrant-hashistack-template/tree/master/template_example/example/standalone).
+All examples have their own directories, with a `main.tf` that references one or more modules. See [template_example](https://github.com/Skatteetaten/vagrant-hashistack-template/tree/master/template_example/example/standalone).
 
 | Examples       |
 | :------------- |

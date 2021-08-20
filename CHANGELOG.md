@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.0] 
+
+### Changed
+- Fixed links to reflect new repo owner #99
+- New box -> [Skatteetaten/hashistack](https://app.vagrantup.com/Skatteetaten/boxes/hashistack) #103
+
 ## [0.1.1]
 
 ### Added
@@ -12,7 +18,7 @@
 - Super-linter is run from ghcr.io locally and in github actions
 
 ### Fixed
-- bug where 'make template_init' would crash on End of File error. [#92](https://github.com/fredrikhgrelland/vagrant-hashistack-template/issues/92)
+- bug where 'make template_init' would crash on End of File error. [#92](https://github.com/Skatteetaten/vagrant-hashistack-template/issues/92)
 - Link #94
 - Link #95
 - Some links in documentation [no issue]

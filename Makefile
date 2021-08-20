@@ -42,7 +42,7 @@ status:
 ######### Pre requisites ##########
 ###################################
 install:
-	 mkdir -p tmp;(cd tmp; git clone --depth=1 https://github.com/fredrikhgrelland/vagrant-hashistack.git; cd vagrant-hashistack; make install); rm -rf tmp/vagrant-hashistack
+	 mkdir -p tmp;(cd tmp; git clone --depth=1 https://github.com/Skatteetaten/vagrant-hashistack.git; cd vagrant-hashistack; make install); rm -rf tmp/vagrant-hashistack
 
 check_for_consul_binary:
 ifeq (, $(shell which consul))
@@ -87,7 +87,7 @@ ifdef CUSTOM_CA
 endif
 
 update-box:
-	@SSL_CERT_FILE=${SSL_CERT_FILE} CURL_CA_BUNDLE=${CURL_CA_BUNDLE} vagrant box update || (echo '\n\nIf you get an SSL error you might be behind a transparent proxy. \nMore info https://github.com/fredrikhgrelland/vagrant-hashistack/blob/master/README.md#proxy\n\n' && exit 2)
+	@SSL_CERT_FILE=${SSL_CERT_FILE} CURL_CA_BUNDLE=${CURL_CA_BUNDLE} vagrant box update || (echo '\n\nIf you get an SSL error you might be behind a transparent proxy. \nMore info https://github.com/Skatteetaten/vagrant-hashistack/blob/master/README.md#proxy\n\n' && exit 2)
 
 pre-commit: check_for_docker_binary check_for_terraform_binary
 	docker run --rm -e RUN_LOCAL=true -v "${PWD}:/tmp/lint/" --env FILTER_REGEX_EXCLUDE="(.vagrant)/*" --env VALIDATE_TERRAGRUNT=false github/super-linter

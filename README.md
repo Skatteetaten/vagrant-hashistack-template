@@ -1,26 +1,26 @@
 <!-- markdownlint-disable MD041 -->
-<p align="center">
- <img width="100px" src="https://www.svgrepo.com/show/58111/cube.svg" align="center" alt="Vagrant-hashistack" />
- <h2 align="center">Vagrant-hashistack Template</h2>
- <p align="center">Starter template for <a href="https://github.com/fredrikhgrelland/vagrant-hashistack">fredrikhgrelland/vagrant-hashistack</a></p>
-<p align="center">
-    <a href="https://github.com/fredrikhgrelland/vagrant-hashistack-template/actions">
-      <img alt="Build" src="https://github.com/fredrikhgrelland/vagrant-hashistack-template/workflows/CI/CD/badge.svg" />
+<p style="text-align: center;">
+ <img width="100px" src="https://www.svgrepo.com/show/58111/cube.svg" style="text-align: center;" alt="Vagrant-hashistack" />
+ <h2 style="text-align: center;">Vagrant-hashistack Template</h2>
+ <p style="text-align: center;">Starter template for <a href="https://github.com/Skatteetaten/vagrant-hashistack">Skatteetaten/vagrant-hashistack</a></p>
+<div style="text-align: center;">
+    <a href="https://github.com/Skatteetaten/vagrant-hashistack-template/actions">
+      <img alt="Build" src="https://github.com/Skatteetaten/vagrant-hashistack-template/workflows/CI/CD/badge.svg" />
     </a>
-    <a href="https://github.com/fredrikhgrelland/vagrant-hashistack/releases">
-      <img alt="Releases" src="https://img.shields.io/github/v/release/fredrikhgrelland/vagrant-hashistack?label=latest%20version" />
+    <a href="https://github.com/Skatteetaten/vagrant-hashistack/releases">
+      <img alt="Releases" src="https://img.shields.io/github/v/release/Skatteetaten/vagrant-hashistack?label=latest%20version" />
     </a>
-    <a href="https://github.com/fredrikhgrelland/vagrant-hashistack/commits">
-      <img alt="Updated" src="https://img.shields.io/github/last-commit/fredrikhgrelland/vagrant-hashistack-template?label=last%20updated" />
+    <a href="https://github.com/Skatteetaten/vagrant-hashistack/commits">
+      <img alt="Updated" src="https://img.shields.io/github/last-commit/Skatteetaten/vagrant-hashistack-template?label=last%20updated" />
     </a>
     <br />
     <br />
-    <p align="center">
-      <a href="https://github.com/fredrikhgrelland/vagrant-hashistack-template/generate" alt="Clone Template">
-            <img src="https://img.shields.io/badge/Github-Clone%20template-blue?style=for-the-badge&logo=github" />
-        </a>
+    <p style="text-align: center;">
+      <a href="https://github.com/Skatteetaten/vagrant-hashistack-template/generate" title="Clone Template">
+         <img src="https://img.shields.io/badge/Github-Clone%20template-blue?style=for-the-badge&logo=github" alt="Clone template"/>
+      </a>
     </p>
-</p>
+</div>
 
 ## Content
 0. [Quick start](#quick-start)
@@ -68,7 +68,7 @@
 > :warning: If you are new to the template we strongly recommend you to read the [Description - What & Why](#description---what--why), then perform the steps in [Install Prerequisites](#install-prerequisites). After that you can move on to our getting started guides in the [getting started](#getting-started) section.
 
 You can quickly get started by following the below steps:
-1. Create your own repository by pressing [Use this template](https://github.com/fredrikhgrelland/vagrant-hashistack-template/generate) button.
+1. Create your own repository by pressing [Use this template](https://github.com/Skatteetaten/vagrant-hashistack-template/generate) button.
 2. Clone the repository you just created to your machine.
 3. Now, run `make template_init` to clean your repository for unnecessary files and folders.
 4. You are now all set to start developing your module!
@@ -90,17 +90,17 @@ If you are new to the template we strongly recommend you to read the [Descriptio
 After that you can move on to the [Usage](#usage) section.
 
 ## Description - What & Why
-This template is a starting point, and example, on how to take advantage of the [Hashistack vagrant-box](https://app.vagrantup.com/fredrikhgrelland/boxes/hashistack) to create, develop, and test Terraform-modules within the Hashistack ecosystem.
+This template is a starting point, and example, on how to take advantage of the [Hashistack vagrant-box](https://app.vagrantup.com/Skatteetaten/boxes/hashistack) to create, develop, and test Terraform-modules within the Hashistack ecosystem.
 
 **Hashistack**, in current repository context, is a set of software products by [HashiCorp](https://www.hashicorp.com/).
 
 
-> :bulb: If you found this in `fredrikhgrelland/vagrant-hashistack`, you may be interested in the separate repository [vagrant-hashistack-template](https://github.com/fredrikhgrelland/vagrant-hashistack-template/).  
+> :bulb: If you found this in `Skatteetaten/vagrant-hashistack`, you may be interested in the separate repository [vagrant-hashistack-template](https://github.com/Skatteetaten/vagrant-hashistack-template/).  
 > :warning: If you are reading this in your own repository, go to [If This Is in Your Own Repository](#if-this-is-in-your-own-repository)
 > :warning: There are getting started guides in [`getting_started_vagrantbox.md`](GETTING_STARTED/getting_started_vagrantbox.md) and [`getting_started_modules.md`](GETTING_STARTED/getting_started_modules.md)
 
 ### Why Does This Exist?
- This template aims to standardize workflow for building and testing terraform-nomad-modules, using the [fredrikhgrelland/hashistack](https://github.com/fredrikhgrelland/vagrant-hashistack) vagrant-box.
+ This template aims to standardize workflow for building and testing terraform-nomad-modules, using the [Skatteetaten/hashistack](https://github.com/Skatteetaten/vagrant-hashistack) vagrant-box.
 
 ### Services
 The default box will start Nomad, Vault, Consul and MinIO bound to loopback and advertising on the IP `10.0.3.10`, which should be available on your local machine.
@@ -138,7 +138,7 @@ to take it down. [Doc on what `vagrant destroy` does](https://www.vagrantup.com/
 
 ##### Option 2 Use the `auto_correct` feature to dynamically allocate ports
 Vagrant has a configuration option called [auto_correct](https://www.vagrantup.com/docs/networking/forwarded_ports#auto_correct) which will use another port if the port specified is already taken. To enable it you can add the lines below to the bottom of your `Vagrantfile`.
-```hcl
+```ruby
 Vagrant.configure("2") do |config|
     # Hashicorp consul ui
     config.vm.network "forwarded_port", guest: 8500, host: 8500, host_ip: "127.0.0.1", auto_correct: true
@@ -176,7 +176,7 @@ The command, will install:
 - [Homebrew](https://brew.sh/) must be installed.
 
 #### Ubuntu Specific
-- Virtualization must be enabled. [Error if it is not.](https://github.com/fredrikhgrelland/vagrant-hashistack/issues/136)
+- Virtualization must be enabled. [Error if it is not.](https://github.com/Skatteetaten/vagrant-hashistack/issues/136)
 - Packages [gpg](http://manpages.ubuntu.com/manpages/xenial/man1/gpg.1.html) and [apt](http://manpages.ubuntu.com/manpages/bionic/man8/apt.8.html) must be installed.
 
 ---
@@ -229,7 +229,7 @@ In addition to ansible playbooks, you can also add bash-scripts that will be run
 
 ### Pre-packaged Configuration Switches
 
-The box comes [with a set of configuration switches controlled by env variables](https://github.com/fredrikhgrelland/vagrant-hashistack#configuration) to simplify testing of different scenarios and enable staged development efforts.
+The box comes [with a set of configuration switches controlled by env variables](https://github.com/Skatteetaten/vagrant-hashistack#configuration) to simplify testing of different scenarios and enable staged development efforts.
 To change any of these values from their defaults, you may add the environment variable to [.env](dev/.env).
 
 NB: All lowercase variables will automatically get a corresponding  `TF_VAR_` prepended variant for use directly in terraform. [Script](../.github/action/create-env.py)
@@ -265,7 +265,7 @@ When ACLs are enabled in Nomad the bootstrap token will be available in vault un
 ##### Enterprise - Namespaces
 
 [Consul namespaces](https://www.consul.io/docs/enterprise/namespaces) feature is available in enterprise version only.
-The switches below will enable [consul_namespaces_test.yml](https://github.com/fredrikhgrelland/vagrant-hashistack/blob/master/ansible/tests/enterprise/consul_namespaces_test.yml)
+The switches below will enable [consul_namespaces_test.yml](https://github.com/Skatteetaten/vagrant-hashistack/blob/master/ansible/tests/enterprise/consul_namespaces_test.yml)
 
 ```text
 consul_enterprise=true
@@ -331,7 +331,7 @@ resource "vault_pki_secret_backend_cert" "app" {
 ### Vagrant Box Resources
 If you get the error message `Dimension memory exhausted on 1 node` or `Dimension CPU exhausted on 1 node`, you might want to increase resources dedicated to your vagrant-box.
 To overwrite the default resource-configuration you can add the lines
-```hcl
+```ruby
 Vagrant.configure("2") do |config|
     config.vm.provider "virtualbox" do |vb|
         vb.memory = 2048
@@ -354,7 +354,7 @@ There are two "Getting started" guides:
 There are several commands that help to run the vagrant-box:
 - `make install` installs all prerequisites. Run once.
 
-- `make up` provisions a [vagrant-hashistack](https://github.com/fredrikhgrelland/vagrant-hashistack/) box on your machine. After the machine and hashistack are set up it will run the [Startup Scheme](#startup-scheme).
+- `make up` provisions a [vagrant-hashistack](https://github.com/Skatteetaten/vagrant-hashistack/) box on your machine. After the machine and hashistack are set up it will run the [Startup Scheme](#startup-scheme).
 
 - `make clean` takes down the provisioned box if there is any.
 
@@ -362,7 +362,7 @@ There are several commands that help to run the vagrant-box:
 
 - `make test`  takes down the provisioned box if there is any, removes tmp files and then runs `make up`.
 
-- `make update` downloads the newest version of the [vagrant-hashistack box](https://github.com/fredrikhgrelland/vagrant-hashistack/) from [vagrantcloud](https://vagrantcloud.com/fredrikhgrelland/hashistack).
+- `make update` downloads the newest version of the [vagrant-hashistack box](https://github.com/Skatteetaten/vagrant-hashistack/) from [vagrantcloud](https://vagrantcloud.com/Skatteetaten/hashistack).
 
 - `make template_example` runs the example in [template_example/](template_example).
 
@@ -488,7 +488,7 @@ You can run [`terraform fmt --recursive`](https://www.terraform.io/docs/commands
 
 1 Add remote upstream to template origin
 ```text
-git remote add template https://github.com/fredrikhgrelland/vagrant-hashistack-template.git
+git remote add template https://github.com/Skatteetaten/vagrant-hashistack-template.git
 ```
 2 Fetch all
 ```text

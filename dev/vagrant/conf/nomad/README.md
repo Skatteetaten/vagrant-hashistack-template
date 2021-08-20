@@ -13,4 +13,4 @@ client {
 }
 ```
 
-An example file is provided in [template_example/dev/vagrant/conf/nomad](https://github.com/fredrikhgrelland/vagrant-hashistack-template/tree/master/template_example/dev/vagrant/conf/nomad).
+An example file is provided in [template_example/dev/vagrant/conf/nomad](https://github.com/Skatteetaten/vagrant-hashistack-template/tree/master/template_example/dev/vagrant/conf/nomad).
