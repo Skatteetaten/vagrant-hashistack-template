@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/upload-artifact@v2
         with:
-          name: docker-config
+          name: docker-auth
           path: ~/.docker/config.json
 
   enforce-changelog:
@@ -43,6 +43,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test:
+    needs:
+      - docker-auth
     runs-on: macos-latest
 
     strategy:
@@ -116,6 +118,11 @@ jobs:
           printf "ENVKEY_nomad_master_token=random\nENVKEY_consul_master_token=random\nENVKEY_vault_master_token=random\n" >> "$GITHUB_ENV"
         env:
           test_master_token: ${{ matrix.master_token }}
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: docker-auth
+          path: template_example/docker/conf/config.json
 
       - name: Make .env_override in template_example dir in order to matrix test
         if: github.repository == 'Skatteetaten/vagrant-hashistack-template'

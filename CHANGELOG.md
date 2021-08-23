@@ -14,6 +14,9 @@
 - Superlinter update to v4
 - update github actions to mirror v0.11 of box.
 
+### Fixed
+- Docker authentication #100
+
 ## [0.1.1]
 
 ### Added
