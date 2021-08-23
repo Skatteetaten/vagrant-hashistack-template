@@ -1,15 +1,18 @@
 # Changelog
 
-## [0.2.0] 
+## [0.2.0]
 
 ## Added
 - `make lint` #105
 - `make fmt`
+- Github action "Concurrency"
 
 ### Changed
 - Fixed links to reflect new repo owner #99
 - New box -> [Skatteetaten/hashistack](https://app.vagrantup.com/Skatteetaten/boxes/hashistack) #103
 - `make precommit` will run `fmt`and `lint`
+- Superlinter update to v4
+- update github actions to mirror v0.11 of box.
 
 ## [0.1.1]
 
