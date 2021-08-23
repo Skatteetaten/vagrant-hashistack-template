@@ -89,9 +89,15 @@ endif
 update-box:
 	@SSL_CERT_FILE=${SSL_CERT_FILE} CURL_CA_BUNDLE=${CURL_CA_BUNDLE} vagrant box update || (echo '\n\nIf you get an SSL error you might be behind a transparent proxy. \nMore info https://github.com/Skatteetaten/vagrant-hashistack/blob/master/README.md#proxy\n\n' && exit 2)
 
-pre-commit: check_for_docker_binary check_for_terraform_binary
-	docker run --rm -e RUN_LOCAL=true -v "${PWD}:/tmp/lint/" --env FILTER_REGEX_EXCLUDE="(.vagrant)/*" --env VALIDATE_TERRAGRUNT=false github/super-linter
+pre-commit: check_for_docker_binary check_for_terraform_binary fmt lint
+
+fmt:
 	terraform fmt -recursive && echo "\e[32mTrying to prettify all .tf files.\e[0m"
+
+lint:
+	@(docker pull ghcr.io/github/super-linter:v4)
+	@(docker run -v $$PWD:/tmp/lint --env RUN_LOCAL=true --env FILTER_REGEX_EXCLUDE="(packer/output-hashistack|.vagrant|template)/*" --env VALIDATE_TERRAGRUNT=false --rm ghcr.io/github/super-linter:v4)
+
 
 ###################################
 ######## Template specific ########

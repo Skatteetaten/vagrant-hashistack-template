@@ -2,9 +2,14 @@
 
 ## [0.2.0] 
 
+## Added
+- `make lint` #105
+- `make fmt`
+
 ### Changed
 - Fixed links to reflect new repo owner #99
 - New box -> [Skatteetaten/hashistack](https://app.vagrantup.com/Skatteetaten/boxes/hashistack) #103
+- `make precommit` will run `fmt`and `lint`
 
 ## [0.1.1]
 

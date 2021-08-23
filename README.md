@@ -368,7 +368,11 @@ There are several commands that help to run the vagrant-box:
 
 - `make template_init` will clean out the template for you to get started with the module development.
 
-- `make pre-commit` this is a helper command that will run the github linter locally and formatt/prettify all the `.tf` files in the directory.
+- `make fmt` format/prettify all the `.tf` files in the directory.
+
+- `make lint` Will run the github linter locally
+
+- `make pre-commit` shorthand for all you need before committing to a PR.
 
 > :bulb: For full info, check [`template/Makefile`](./Makefile).
 > :warning: Makefile commands are not idempotent in the context of vagrant-box.  You could face the error of port collisions. Most of the cases it could happen because of the vagrant box has already been running. Run `vagrant destroy -f` to destroy the box.
