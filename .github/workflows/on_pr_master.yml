@@ -131,6 +131,11 @@ jobs:
           ENVKEY_env_override: true
           FILE_NAME: template_example/.env_override
 
+      - uses: actions/download-artifact@v2
+        with:
+          name: docker-auth
+          path: docker/conf/auth
+
       - name: Run make template_example
         if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
         run: make template_example
