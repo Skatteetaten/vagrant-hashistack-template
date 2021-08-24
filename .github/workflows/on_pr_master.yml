@@ -122,7 +122,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: docker-auth
-          path: template_example/docker/conf/config.json
+          path: /template_example/docker/conf/config.json
 
       - name: Make .env_override in template_example dir in order to matrix test
         if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
