@@ -57,8 +57,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-        with:
-          submodules: recursive
 
       - name: set consul acl (enabled/disabled)
         id: consul_acl
@@ -119,11 +117,6 @@ jobs:
         env:
           test_master_token: ${{ matrix.master_token }}
 
-      - uses: actions/download-artifact@v2
-        with:
-          name: docker-auth
-          path: /template_example/docker/conf/config.json
-
       - name: Make .env_override in template_example dir in order to matrix test
         if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
         run: python .github/action/create-env.py
@@ -134,7 +127,12 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: docker-auth
-          path: docker/conf/auth
+          path: template_example/docker/conf/config.json
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: docker-auth
+          path: docker/conf/config.json
 
       - name: Run make template_example
         if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
