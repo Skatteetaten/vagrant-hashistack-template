@@ -374,6 +374,9 @@ There are several commands that help to run the vagrant-box:
 
 - `make pre-commit` shorthand for all you need before committing to a PR.
 
+- `make destroy-all-running-boxes` CAUTION! DESTRUCTIVE. If you are running out of space or having trouble with virtualbox or vagrant. You may run the "get out of jail" command
+  . It will stop ALL virtualbox vms and delete them.
+
 > :bulb: For full info, check [`template/Makefile`](./Makefile).
 > :warning: Makefile commands are not idempotent in the context of vagrant-box.  You could face the error of port collisions. Most of the cases it could happen because of the vagrant box has already been running. Run `vagrant destroy -f` to destroy the box.
 

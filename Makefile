@@ -1,7 +1,7 @@
 include dev/.env
 export PATH := $(shell pwd)/tmp:$(PATH)
 
-.ONESHELL .PHONY: up update-box destroy-box remove-tmp clean example
+.ONESHELL .PHONY: up update-box destroy-box remove-tmp clean example destroy-all-running-boxes
 .DEFAULT_GOAL := up
 
 ###################################
@@ -77,6 +77,9 @@ remove-tmp:
 	rm -rf ./example/**/terraform.*
 
 clean: destroy-box remove-tmp
+
+destroy-all-running-boxes:
+	(. ./dev/script/clean_all_vbox.sh)
 
 ###################################
 ######### Helper commands #########

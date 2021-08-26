@@ -5,6 +5,7 @@
 ## Added
 - `make lint` #105
 - `make fmt`
+- `make destroy-all-running-boxes` added as a fix-all-my-virtualbox-vagrant-problems-now #84
 - Github action "Concurrency"
 
 ### Changed
