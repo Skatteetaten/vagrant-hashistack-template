@@ -7,6 +7,7 @@
 - `make fmt`
 - `make destroy-all-running-boxes` added as a fix-all-my-virtualbox-vagrant-problems-now #84
 - Github action "Concurrency"
+- Build docker images used for testing and host them on ghcr.io #108
 
 ### Changed
 - Fixed links to reflect new repo owner #99
