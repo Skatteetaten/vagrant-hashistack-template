@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-
 while true; do
   running_vms=$( VBoxManage list runningvms | awk '{print $2}' 2>&1 )
   if [ -z "$running_vms" ]

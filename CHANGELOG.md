@@ -7,14 +7,16 @@
 - `make fmt`
 - `make destroy-all-running-boxes` added as a fix-all-my-virtualbox-vagrant-problems-now #84
 - Github action "Concurrency"
-- Build docker images used for testing and host them on ghcr.io #108
+- Build docker images and host them on ghcr.io #108
 
 ### Changed
 - Fixed links to reflect new repo owner #99
 - New box -> [Skatteetaten/hashistack](https://app.vagrantup.com/Skatteetaten/boxes/hashistack) #103
 - `make precommit` will run `fmt`and `lint`
 - Superlinter update to v4
-- update github actions to mirror v0.11 of box.
+- update github actions to mirror v0.11 of box
+- Lint only changed files on Pull Requests
+- Schedule CI/CD Daily at 05:30
 
 ### Fixed
 - Docker authentication #100

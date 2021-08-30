@@ -1,9 +1,15 @@
+- name: Check for prebuilt container image
+  stat:
+    path: /vagrant/dev/tmp/docker_image.tar
+  register: container_image
+
 - name: Remove docker image
   docker_image:
     name: docker_image
     tag: local
     force_absent: true
     state: absent
+  when: not container_image.stat.exists
 
 - name: Build docker image
   docker_image:
@@ -16,6 +22,7 @@
       args:
         TEST_DOWNLOAD_BUILD_ARGUMENT: https://nrk.no
     source: build
+  when: not container_image.stat.exists
 
 # NB! Folder /vagrant is mounted to Minio
 # Folder `dev` is going to be a bucket name
@@ -26,6 +33,7 @@
     mode: '0755'
     owner: vagrant
     group: vagrant
+  when: not container_image.stat.exists
 
 - name: Archive docker image
   docker_image:
@@ -33,3 +41,4 @@
     tag: local
     archive_path: /vagrant/dev/tmp/docker_image.tar
     source: local
+  when: not container_image.stat.exists

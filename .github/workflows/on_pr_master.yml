@@ -3,8 +3,9 @@ on:
   pull_request:
     branches: [ master ]
     types: [ opened, synchronize, reopened, closed, labeled, unlabeled ]
-  push:
-    branches: [ master ]
+  schedule:
+    #- cron:  '30 5 * * *' #Daily at 05:30
+    - cron:  '*/15 * * * *' #At every 15th minute.
 
 concurrency:
   group: ${{ github.ref }}
@@ -30,13 +31,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v3
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
-            type=raw,value=v${{ steps.next_version.outputs.version }}
+            type=raw,value=v${{ needs.release-prerequisites.outputs.next_version }}
             type=raw,value=latest
 
       - name: Build and push container image
@@ -59,11 +63,16 @@ jobs:
     if: github.event.action != 'closed'
     steps:
       - uses: actions/checkout@v2
+        with:
+          # Full git history is needed to get a proper list of changed files within `super-linter`
+          fetch-depth: 0
       - name: Super-Linter
         uses: github/super-linter@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_TERRAGRUNT: false
+          VALIDATE_DOCKERFILE: false
+          VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'pull_request' && 'false' || 'true' }}
 
   docker-auth:
     runs-on: ubuntu-latest
@@ -88,6 +97,7 @@ jobs:
   test:
     needs:
       - docker-auth
+      - build-and-push-image
     runs-on: macos-latest
 
     strategy:
@@ -186,7 +196,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: container-image
-          path: template_example/docker
+          path: template_example/dev/tmp/docker_image.tar
 
       - name: Run make template_example
         if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
@@ -215,7 +225,7 @@ jobs:
         if: github.repository != 'Skatteetaten/vagrant-hashistack-template'
         with:
           name: container-image
-          path: docker
+          path: dev/tmp/docker_image.tar
 
       - name: Run make test
         if: github.repository != 'Skatteetaten/vagrant-hashistack-template'

@@ -99,7 +99,7 @@ fmt:
 
 lint:
 	@(docker pull ghcr.io/github/super-linter:v4)
-	@(docker run -v $$PWD:/tmp/lint --env RUN_LOCAL=true --env FILTER_REGEX_EXCLUDE="(packer/output-hashistack|.vagrant|template)/*" --env VALIDATE_TERRAGRUNT=false --rm ghcr.io/github/super-linter:v4)
+	@(docker run -v $$PWD:/tmp/lint --env RUN_LOCAL=true --env FILTER_REGEX_EXCLUDE="(packer/output-hashistack|.vagrant|template)/*" --env VALIDATE_TERRAGRUNT=false VALIDATE_DOCKERFILE=false --rm ghcr.io/github/super-linter:v4)
 
 
 ###################################
