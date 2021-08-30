@@ -128,6 +128,8 @@ template_init:
 		echo "Deleting: $$folder " ; \
 		rm -rf $$folder && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}" ; \
 	done
+	@echo -n "\nRemoving Dockerfile"
+	rm -f docker/Dockerfile && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
 
 	@echo -n "\nMoving README.md to .github/template_specific as old_README.md " 
 	mv README.md .github/template_specific/old_README.md && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"

@@ -11,6 +11,49 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  build-and-push-image:
+    needs:
+      - release-prerequisites
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=v${{ steps.next_version.outputs.version }}
+            type=raw,value=latest
+
+      - name: Build and push container image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./docker
+          push: ${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=docker,dest=/tmp/container-image.tar
+
+      - name: Upload container image
+        uses: actions/upload-artifact@v2
+        with:
+          name: container-image
+          path: /tmp/container-image.tar
+
   linter:
     runs-on: ubuntu-latest
     if: github.event.action != 'closed'
@@ -117,6 +160,10 @@ jobs:
         env:
           test_master_token: ${{ matrix.master_token }}
 
+      #############################
+      ### If Template example   ###
+      #############################
+
       - name: Make .env_override in template_example dir in order to matrix test
         if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
         run: python .github/action/create-env.py
@@ -125,18 +172,29 @@ jobs:
           FILE_NAME: template_example/.env_override
 
       - uses: actions/download-artifact@v2
+        if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
+        with:
+          name: docker-auth
+          path: template_example/docker/conf/config.json
+
+      - uses: actions/download-artifact@v2
+        if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
         with:
           name: docker-auth
           path: template_example/docker/conf/config.json
 
       - uses: actions/download-artifact@v2
         with:
-          name: docker-auth
-          path: docker/conf/config.json
+          name: container-image
+          path: template_example/docker
 
       - name: Run make template_example
         if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
         run: make template_example
+
+      #############################
+      ### If cloned template    ###
+      #############################
 
       - name: Make .env_override in template dir in order to matrix test
         if: github.repository != 'Skatteetaten/vagrant-hashistack-template'
@@ -146,6 +204,18 @@ jobs:
           ENVKEY_CONTAINER_REGISTRY_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
           ENVKEY_env_override: true
           FILE_NAME: .env_override
+
+      - uses: actions/download-artifact@v2
+        if: github.repository != 'Skatteetaten/vagrant-hashistack-template'
+        with:
+          name: docker-auth
+          path: docker/conf/config.json
+
+      - uses: actions/download-artifact@v2
+        if: github.repository != 'Skatteetaten/vagrant-hashistack-template'
+        with:
+          name: container-image
+          path: docker
 
       - name: Run make test
         if: github.repository != 'Skatteetaten/vagrant-hashistack-template'
