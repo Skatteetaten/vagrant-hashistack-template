@@ -1,4 +1,4 @@
-- name: Check for prebuilt container image
+- name: Check for prebuilt container image from github actions
   stat:
     path: /vagrant/dev/tmp/docker_image.tar
   register: container_image
