@@ -21,6 +21,7 @@
 
 ### Fixed
 - Docker authentication #100
+- Improve cleaning of temporary files from build/test procedures
 
 ## [0.1.2]
 

@@ -75,8 +75,21 @@ remove-tmp:
 	rm -rf ./example/**/.terraform
 	rm -rf ./example/**/.terraform.*
 	rm -rf ./example/**/terraform.*
+	mv ./.env_override ./.env_override.bak | true
+	rm -f ./*.log
 
-clean: destroy-box remove-tmp
+remove-template-example-tmp:
+ifneq (,$(wildcard ./template_example))
+	rm -rf ./template_example/.minio.sys
+	rm -rf ./template_example/.vagrant
+	rm -rf ./template_example/dev/tmp
+	mv ./template_example/.env_override ./.env_override.bak | true
+	rm -f ./template_example/*.log
+	rm -f ./template_example/dev/vagrant/bootstrap/pre_ansible.sh
+endif
+
+clean: destroy-box remove-tmp remove-template-example-tmp
+
 
 destroy-all-running-boxes:
 	(. ./dev/script/clean_all_vbox.sh)
