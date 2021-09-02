@@ -17,6 +17,7 @@
 - update github actions to mirror v0.11 of box
 - Lint only changed files on Pull Requests
 - Schedule CI/CD Daily at 05:30
+- remove `project` checkbox from issue templates.
 
 ### Fixed
 - Docker authentication #100
