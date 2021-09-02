@@ -190,11 +190,6 @@ jobs:
       - uses: actions/download-artifact@v2
         if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
         with:
-          name: docker-auth
-          path: template_example/docker/conf/config.json
-
-      - uses: actions/download-artifact@v2
-        with:
           name: container-image
           path: template_example/dev/tmp/docker_image.tar
 
