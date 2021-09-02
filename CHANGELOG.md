@@ -18,6 +18,7 @@
 - Lint only changed files on Pull Requests
 - Schedule CI/CD Daily at 05:30
 - remove `project` checkbox from issue templates.
+- Testing workflow will not fail fast when a job in the matrix fails
 
 ### Fixed
 - Docker authentication #100
