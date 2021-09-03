@@ -7,7 +7,8 @@
 - `make fmt`
 - `make destroy-all-running-boxes` added as a fix-all-my-virtualbox-vagrant-problems-now #84
 - Github action "Concurrency"
-- Build docker images and host them on ghcr.io #108
+- Build docker image and host them on ghcr.io #108
+- Build test images and host them on ghcr.io test_containers.yml
 
 ### Changed
 - Fixed links to reflect new repo owner #99
@@ -19,6 +20,7 @@
 - Schedule CI/CD Daily at 05:30
 - remove `project` checkbox from issue templates.
 - Testing workflow will not fail fast when a job in the matrix fails
+- Use slim linter
 
 ### Fixed
 - Docker authentication #100

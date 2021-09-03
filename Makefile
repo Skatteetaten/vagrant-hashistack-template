@@ -111,8 +111,8 @@ fmt:
 	terraform fmt -recursive && echo "\e[32mTrying to prettify all .tf files.\e[0m"
 
 lint:
-	@(docker pull ghcr.io/github/super-linter:v4)
-	@(docker run -v $$PWD:/tmp/lint --env RUN_LOCAL=true --env FILTER_REGEX_EXCLUDE="(packer/output-hashistack|.vagrant|template)/*" --env VALIDATE_TERRAGRUNT=false VALIDATE_DOCKERFILE=false --rm ghcr.io/github/super-linter:v4)
+	@(docker pull ghcr.io/github/super-linter:slim-v4)
+	@(docker run -v $$PWD:/tmp/lint --env RUN_LOCAL=true --env FILTER_REGEX_EXCLUDE="(packer/output-hashistack|.vagrant|template)/*" --env VALIDATE_TERRAGRUNT=false VALIDATE_DOCKERFILE=false --rm ghcr.io/github/super-linter:slim-v4)
 
 
 ###################################

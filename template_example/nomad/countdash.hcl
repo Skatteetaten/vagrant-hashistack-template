@@ -33,7 +33,8 @@ job "countdash" {
       }
       config {
         load = "docker_image.tar"
-        image = "docker_image:local"
+        # This image is built in this repo and can thus be tested
+        image = "ghcr.io/skatteetaten/vagrant-hashistack-template"
       }
     }
   }
@@ -77,7 +78,8 @@ job "countdash" {
         COUNTING_SERVICE_URL = "http://${NOMAD_UPSTREAM_ADDR_count_api}"
       }
       config {
-        image = "hashicorpnomad/counter-dashboard:v1"
+        # This image is prebuilt on a registry
+        image = "hashicorpnomad/counter-dashboard:v3"
       }
     }
   }

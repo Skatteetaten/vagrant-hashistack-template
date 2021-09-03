@@ -1,0 +1,139 @@
+name: Build test containers
+on:
+  pull_request:
+    branches: [ master ]
+    types: [ opened, synchronize, reopened, closed, labeled, unlabeled ]
+
+concurrency:
+  group: ${{ github.ref }}-containers
+  cancel-in-progress: true
+
+jobs:
+  build-and-push-images:
+    if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
+    needs:
+      - release-prerequisites
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build meta for ghcr.io/${{ github.repository }}-hashicorpnomad-counter-api:v3
+        id: meta_api
+        uses: docker/metadata-action@v3
+        with:
+          images: ghcr.io/${{ github.repository }}-hashicorpnomad-counter-api:v3
+          tags: |
+            type=raw,value=v3
+            type=raw,value=latest
+
+      - name: Build meta for ghcr.io/${{ github.repository }}-hashicorpnomad-counter-dashboard:v3
+        id: meta_dashboard
+        uses: docker/metadata-action@v3
+        with:
+          images: ghcr.io/${{ github.repository }}-hashicorpnomad-counter-dashboard:v3
+          tags: |
+            type=raw,value=v3
+            type=raw,value=latest
+
+      - name: Build and push ghcr.io/${{ github.repository }}-hashicorpnomad-counter-api:v3
+        uses: docker/build-push-action@v2
+        with:
+          context: ./github/container
+          file: hashicorpnomad-counter-api.hashicorpnomad-counter-dashboard.Dockerfile
+          push: true #${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
+          tags: ${{ steps.meta_api.outputs.tags }}
+          labels: ${{ steps.meta_api.outputs.labels }}
+
+      - name: Build and push ghcr.io/${{ github.repository }}-hashicorpnomad-counter-dashboard:v3
+        uses: docker/build-push-action@v2
+        with:
+          context: ./github/container
+          file: hashicorpnomad-counter-dashboard.hashicorpnomad-counter-dashboard.Dockerfile
+          push: true #${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
+          tags: ${{ steps.meta_dashboard.outputs.tags }}
+          labels: ${{ steps.meta_dashboard.outputs.labels }}
+
+  linter:
+    if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Super-Linter
+        uses: docker://ghcr.io/github/super-linter:slim-v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FILTER_REGEX_INCLUDE: .github/container/
+          VALIDATE_TERRAGRUNT: false
+          VALIDATE_DOCKERFILE: false
+
+  enforce-changelog:
+    runs-on: ubuntu-latest
+    if: github.event.action != 'closed' && github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dangoslen/changelog-enforcer@v2.3.1
+        with:
+          changeLogPath: 'CHANGELOG.md'
+          skipLabels: 'ci/skip-changelog'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  release-prerequisites:
+    if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
+    needs:
+      - enforce-changelog
+      - linter
+    runs-on: ubuntu-latest
+    outputs:
+      bump: ${{ steps.bump.outputs.match }}
+      next_version: ${{ steps.next_version.outputs.version }}
+      log_entry: ${{ steps.changelog_reader.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Require PR label (major/minor/patch)
+        id: bump
+        uses: zwaldowski/match-label-action@v2
+        with:
+          allowed: change/major,change/minor,change/patch
+
+      - uses: rishabhgupta/split-by@v1
+        id: split
+        with:
+          string: ${{ steps.bump.outputs.match }}
+          split-by: '/'
+
+      - id: next_version
+        uses: zwaldowski/semver-release-action@v2
+        with:
+          dry_run: true
+          bump: ${{ steps.split.outputs._1 }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Find and replace
+        run: python .github/action/find-replace.py
+        env:
+          FIND: "'"
+          REPLACE: "'\\''"
+          FILE_TO_MODIFY: CHANGELOG.md
+
+      - name: Get Changelog Entry
+        id: changelog_reader
+        uses: mindsers/changelog-reader-action@v2.0.0
+        with:
+          version: ${{ steps.next_version.outputs.version }}
+          path: ./CHANGELOG.md
