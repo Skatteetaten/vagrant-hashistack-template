@@ -1,6 +1,5 @@
 # hadolint ignore=DL3007
-#FROM ghcr.io/skatteetaten/vagrant-hashistack-template:latest
-FROM hashicorpnomad/counter-api:v3
+FROM ghcr.io/skatteetaten/vagrant-hashistack-template-hashicorpnomad-counter-api:latest
 
 # Allow buildtime config
 ARG TEST_DOWNLOAD_BUILD_ARGUMENT=https://nrk.no

@@ -9,10 +9,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
+    # Set job outputs to values from filter step
+    outputs:
+      src: ${{ steps.changes.outputs.src }}
+    steps:
+      - uses: dorny/paths-filter@v2.2.1
+        id: changes
+        with:
+          filters: |
+            src:
+              - '.github/container/**'
+
   build-and-push-images:
     if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
     needs:
       - release-prerequisites
+      - changes
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -53,8 +68,8 @@ jobs:
       - name: Build and push ghcr.io/${{ github.repository }}-hashicorpnomad-counter-api
         uses: docker/build-push-action@v2
         with:
-          context: ./github/container
-          file: hashicorpnomad-counter-api.hashicorpnomad-counter-dashboard.Dockerfile
+          context: .github/container/
+          file: .github/container/hashicorpnomad-counter-api.Dockerfile
           push: true #${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
           tags: ${{ steps.meta_api.outputs.tags }}
           labels: ${{ steps.meta_api.outputs.labels }}
@@ -62,14 +77,16 @@ jobs:
       - name: Build and push ghcr.io/${{ github.repository }}-hashicorpnomad-counter-dashboard
         uses: docker/build-push-action@v2
         with:
-          context: ./github/container
-          file: hashicorpnomad-counter-dashboard.hashicorpnomad-counter-dashboard.Dockerfile
+          context: .github/container/
+          file: .github/container/hashicorpnomad-counter-dashboard.Dockerfile
           push: true #${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
           tags: ${{ steps.meta_dashboard.outputs.tags }}
           labels: ${{ steps.meta_dashboard.outputs.labels }}
 
   linter:
     if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
+    needs:
+      - changes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -77,13 +94,15 @@ jobs:
         uses: docker://ghcr.io/github/super-linter:slim-v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          FILTER_REGEX_INCLUDE: .github/container/
+          FILTER_REGEX_INCLUDE: .github/container/|.github/workflows/test_containers.yml
           VALIDATE_TERRAGRUNT: false
           VALIDATE_DOCKERFILE: false
 
   enforce-changelog:
     runs-on: ubuntu-latest
-    if: github.event.action != 'closed' && github.event_name == 'pull_request'
+    if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
+    needs:
+      - changes
     steps:
       - uses: actions/checkout@v2
       - uses: dangoslen/changelog-enforcer@v2.3.1
@@ -98,6 +117,7 @@ jobs:
     needs:
       - enforce-changelog
       - linter
+      - changes
     runs-on: ubuntu-latest
     outputs:
       bump: ${{ steps.bump.outputs.match }}
