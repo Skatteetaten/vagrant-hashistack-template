@@ -22,6 +22,7 @@ jobs:
           filters: |
             src:
               - '.github/container/**'
+              - '.github/workflows/test_containers.yml'
 
   build-and-push-images:
     if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
@@ -70,7 +71,7 @@ jobs:
         with:
           context: .github/container/
           file: .github/container/hashicorpnomad-counter-api.Dockerfile
-          push: true #${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
+          push: ${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
           tags: ${{ steps.meta_api.outputs.tags }}
           labels: ${{ steps.meta_api.outputs.labels }}
 
@@ -79,7 +80,7 @@ jobs:
         with:
           context: .github/container/
           file: .github/container/hashicorpnomad-counter-dashboard.Dockerfile
-          push: true #${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
+          push: ${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
           tags: ${{ steps.meta_dashboard.outputs.tags }}
           labels: ${{ steps.meta_dashboard.outputs.labels }}
 
