@@ -41,7 +41,7 @@ RUN \
     && curl -s -L -o /dev/null ${TEST_DOWNLOAD_BUILD_ARGUMENT} || printf "\n###############\nERROR: You are probably behind a corporate proxy. Add your custom ca .crt in the conf/certificates docker build folder\n###############\n"
 
 
-FROM hashicorpnomad/counter-api:v1
+FROM hashicorpnomad/counter-api:v3
 
 # Allow buildtime config
 ARG TEST_DOWNLOAD_BUILD_ARGUMENT=https://nrk.no
