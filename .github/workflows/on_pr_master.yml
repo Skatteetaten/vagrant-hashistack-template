@@ -192,7 +192,7 @@ jobs:
         if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
         with:
           name: container-image
-          path: template_example/dev/tmp/docker_image.tar
+          path: template_example/dev/tmp/container-image.tar
 
       - name: Run make template_example
         if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
@@ -221,7 +221,7 @@ jobs:
         if: github.repository != 'Skatteetaten/vagrant-hashistack-template'
         with:
           name: container-image
-          path: dev/tmp/docker_image.tar
+          path: dev/tmp/container-image.tar
 
       - name: Run make test
         if: github.repository != 'Skatteetaten/vagrant-hashistack-template'

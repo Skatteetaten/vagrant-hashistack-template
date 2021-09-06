@@ -1,6 +1,6 @@
 - name: Check for prebuilt container image from github actions
   stat:
-    path: /vagrant/dev/tmp/docker_image.tar
+    path: /vagrant/dev/tmp/container-image.tar
   register: container_image
 
 - name: Remove docker image
@@ -13,8 +13,8 @@
 
 - name: Build docker image
   docker_image:
-    name: docker_image
-    tag: local
+    name: ghcr.io/skatteetaten/vagrant-hashistack-template
+    tag: latest
     build:
       path: /vagrant/docker
       pull: false
@@ -36,8 +36,8 @@
 
 - name: Archive docker image
   docker_image:
-    name: docker_image
-    tag: local
-    archive_path: /vagrant/dev/tmp/docker_image.tar
+    name: ghcr.io/skatteetaten/vagrant-hashistack-template
+    tag: latest
+    archive_path: /vagrant/dev/tmp/container-image.tar
     source: local
   when: not container_image.stat.exists
