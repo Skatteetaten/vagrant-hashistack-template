@@ -1,7 +1,7 @@
 include dev/.env
 export PATH := $(shell pwd)/tmp:$(PATH)
 
-.ONESHELL .PHONY: up update-box destroy-box remove-tmp clean example
+.ONESHELL .PHONY: up update-box destroy-box remove-tmp clean example destroy-all-running-boxes
 .DEFAULT_GOAL := up
 
 ###################################
@@ -42,7 +42,7 @@ status:
 ######### Pre requisites ##########
 ###################################
 install:
-	 mkdir -p tmp;(cd tmp; git clone --depth=1 https://github.com/fredrikhgrelland/vagrant-hashistack.git; cd vagrant-hashistack; make install); rm -rf tmp/vagrant-hashistack
+	 mkdir -p tmp;(cd tmp; git clone --depth=1 https://github.com/Skatteetaten/vagrant-hashistack.git; cd vagrant-hashistack; make install); rm -rf tmp/vagrant-hashistack
 
 check_for_consul_binary:
 ifeq (, $(shell which consul))
@@ -75,8 +75,24 @@ remove-tmp:
 	rm -rf ./example/**/.terraform
 	rm -rf ./example/**/.terraform.*
 	rm -rf ./example/**/terraform.*
+	mv ./.env_override ./.env_override.bak | true
+	rm -f ./*.log
 
-clean: destroy-box remove-tmp
+remove-template-example-tmp:
+ifneq (,$(wildcard ./template_example))
+	rm -rf ./template_example/.minio.sys
+	rm -rf ./template_example/.vagrant
+	rm -rf ./template_example/dev/tmp
+	mv ./template_example/.env_override ./.env_override.bak | true
+	rm -f ./template_example/*.log
+	rm -f ./template_example/dev/vagrant/bootstrap/pre_ansible.sh
+endif
+
+clean: destroy-box remove-tmp remove-template-example-tmp
+
+
+destroy-all-running-boxes:
+	(. ./dev/script/clean_all_vbox.sh)
 
 ###################################
 ######### Helper commands #########
@@ -87,11 +103,17 @@ ifdef CUSTOM_CA
 endif
 
 update-box:
-	@SSL_CERT_FILE=${SSL_CERT_FILE} CURL_CA_BUNDLE=${CURL_CA_BUNDLE} vagrant box update || (echo '\n\nIf you get an SSL error you might be behind a transparent proxy. \nMore info https://github.com/fredrikhgrelland/vagrant-hashistack/blob/master/README.md#proxy\n\n' && exit 2)
+	@SSL_CERT_FILE=${SSL_CERT_FILE} CURL_CA_BUNDLE=${CURL_CA_BUNDLE} vagrant box update || (echo '\n\nIf you get an SSL error you might be behind a transparent proxy. \nMore info https://github.com/Skatteetaten/vagrant-hashistack/blob/master/README.md#proxy\n\n' && exit 2)
 
-pre-commit: check_for_docker_binary check_for_terraform_binary
-	docker run --rm -e RUN_LOCAL=true -v "${PWD}:/tmp/lint/" --env FILTER_REGEX_EXCLUDE="(.vagrant)/*" --env VALIDATE_TERRAGRUNT=false github/super-linter
+pre-commit: check_for_docker_binary check_for_terraform_binary fmt lint
+
+fmt:
 	terraform fmt -recursive && echo "\e[32mTrying to prettify all .tf files.\e[0m"
+
+lint:
+	@(docker pull ghcr.io/github/super-linter:slim-v4)
+	@(docker run -v $$PWD:/tmp/lint --env RUN_LOCAL=true --env FILTER_REGEX_EXCLUDE="(packer/output-hashistack|.vagrant|template)/*" --env VALIDATE_TERRAGRUNT=false VALIDATE_DOCKERFILE=false --rm ghcr.io/github/super-linter:slim-v4)
+
 
 ###################################
 ######## Template specific ########
@@ -119,6 +141,8 @@ template_init:
 		echo "Deleting: $$folder " ; \
 		rm -rf $$folder && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}" ; \
 	done
+	@echo -n "\nRemoving Dockerfile"
+	rm -f docker/Dockerfile && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"
 
 	@echo -n "\nMoving README.md to .github/template_specific as old_README.md " 
 	mv README.md .github/template_specific/old_README.md && echo "${GREEN}Success${RESET}" || echo "${RED}Failed${RESET}"

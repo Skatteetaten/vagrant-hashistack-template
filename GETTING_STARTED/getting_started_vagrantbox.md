@@ -2,10 +2,10 @@
 
 > :warning: Read the section `Description - what & why` in [README.md](/README.md) to get a quick introduction to what this repo is.
 
-The goal of this guide is to give an introduction to the [vagrant hashistack box](https://vagrantcloud.com/fredrikhgrelland/hashistack), its features, and how to use it.
+The goal of this guide is to give an introduction to the [vagrant hashistack box](https://vagrantcloud.com/Skatteetaten/hashistack), its features, and how to use it.
 
 ## What is the vagrant hashistack box
-The vagrant-hashistack box is a virtual machine built with [vagrant](https://www.vagrantup.com/), using the code from [vagrant-hashistack](https://github.com/fredrikhgrelland/vagrant-hashistack/). It aims to simulate a hashistack ecosystem, and with the help of built in switches and services it is able to be tweaked to a user's needs.
+The vagrant-hashistack box is a virtual machine built with [vagrant](https://www.vagrantup.com/), using the code from [vagrant-hashistack](https://github.com/Skatteetaten/vagrant-hashistack/). It aims to simulate a hashistack ecosystem, and with the help of built in switches and services it is able to be tweaked to a user's needs.
 
 > :bulb: **Hashistack**, in current repository context, is a set of software products by [HashiCorp](https://www.hashicorp.com/).
 

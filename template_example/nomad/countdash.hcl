@@ -25,15 +25,16 @@ job "countdash" {
     task "web" {
       driver = "docker"
       artifact {
-        source = "s3::http://127.0.0.1:9000/dev/tmp/docker_image.tar"
+        source = "s3::http://127.0.0.1:9000/dev/tmp/container-image.tar"
         options {
           aws_access_key_id     = "minioadmin"
           aws_access_key_secret = "minioadmin"
         }
       }
       config {
-        load = "docker_image.tar"
-        image = "docker_image:local"
+        load = "container-image.tar"
+        # This image is built in this repo and can thus be tested
+        image = "ghcr.io/skatteetaten/vagrant-hashistack-template"
       }
     }
   }
@@ -77,7 +78,8 @@ job "countdash" {
         COUNTING_SERVICE_URL = "http://${NOMAD_UPSTREAM_ADDR_count_api}"
       }
       config {
-        image = "hashicorpnomad/counter-dashboard:v1"
+        # This image is prebuilt on a registry
+        image = "hashicorpnomad/counter-dashboard:v3"
       }
     }
   }

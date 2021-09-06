@@ -25,7 +25,7 @@
 
 > :warning: Read the section `Description - what & why` in [README.md](/README.md) to get a quick introduction to what this repo is.
 
-The template-repo you found this README in is specifically built to make it as easy and quick as possible to make terraform modules, and then test them inside the [vagrant-hashistack](https://app.vagrantup.com/fredrikhgrelland/boxes/hashistack) box.
+The template-repo you found this README in is specifically built to make it as easy and quick as possible to make terraform modules, and then test them inside the [vagrant-hashistack](https://app.vagrantup.com/Skatteetaten/boxes/hashistack) box.
 
 This guide aims to show you how to use this template.
 The steps we are going to walk through are as follows:
@@ -55,9 +55,9 @@ All directories have their own uses, detailed below:
 ### The development process
 
 #### 0. Creating A Repository
-Before we begin you need to create your own repository. Do that by pressing [Use this template](https://github.com/fredrikhgrelland/vagrant-hashistack-template/generate).
+Before we begin you need to create your own repository. Do that by pressing [Use this template](https://github.com/Skatteetaten/vagrant-hashistack-template/generate).
 Clone your repository and run `make template_init` to clean your template for all unnecessary files and folders.
-**:warning: Keep in mind that `make template_init` will move all the getting started guides and the root README to [.github/template_specific](https://github.com/fredrikhgrelland/vagrant-hashistack-template/tree/master/.github/template_specific).**
+**:warning: Keep in mind that `make template_init` will move all the getting started guides and the root README to [.github/template_specific](https://github.com/Skatteetaten/vagrant-hashistack-template/tree/master/.github/template_specific).**
 
 The rest of the steps for this guide should be done inside your own repository.
 
@@ -66,7 +66,7 @@ The rest of the steps for this guide should be done inside your own repository.
 > :warning: This section is only relevant if you want to build your own docker image.
 
 Most of the terraform modules will deploy one or more docker-containers to Nomad.
-If you want to create your own docker-image, put the [`Dockerfile`](https://docs.docker.com/engine/reference/builder/) under [docker/](/docker/).
+If you want to create your own docker-image, put the [`Dockerfile`](https://docs.docker.com/engine/reference/builder/) under [docker/](/docker).
 You can find an example where we build docker image for the module in [template_example](/template_example/docker)
 #### 2. Deploying Container With Nomad
 At this point you should have a service that will run when you start the docker container.
@@ -80,7 +80,7 @@ It also has a tight integration with Vault that we will use later.
 > :warning: Skip this step if you are using a pre-made image from [dockerhub](https://hub.docker.com/), or another registry
 
 The image we built in our first step is now available as an image on our local machine, but nomad inside the virtual machine does not have access to that.
-The only way Nomad can use our image is by [fetching it from MinIO](https://github.com/fredrikhgrelland/vagrant-hashistack-template/blob/master/template_example/nomad/countdash.hcl#L27-L37), which means we need to upload it to MinIO somehow.
+The only way Nomad can use our image is by [fetching it from MinIO](https://github.com/Skatteetaten/vagrant-hashistack-template/blob/master/template_example/nomad/countdash.hcl#L27-L37), which means we need to upload it to MinIO somehow.
 From [the MinIO section](getting_started_vagrantbox.md#2-minio) we know that anything inside `/vagrant` will be made available.
 [This section](/README.md#pushing-resources-to-minio-with-ansible-docker-image) shows how we can use ansible code to get our image in a subfolder of `/vagrant`:
 
@@ -186,12 +186,12 @@ Below is an example on how to use a module:
 
  ```hcl-terraform
 module "minio" {
-  source = "github.com/fredrikhgrelland/terraform-nomad-minio.git?ref=0.0.3"
+  source = "github.com/Skatteetaten/terraform-nomad-minio.git?ref=0.0.3"
 }
 ```
 
 This will fetch the module at the given source.
-In the case above it is a [MinIO module, version 0.0.3](https://github.com/fredrikhgrelland/terraform-nomad-minio/releases/tag/0.0.3)
+In the case above it is a [MinIO module, version 0.0.3](https://github.com/Skatteetaten/terraform-nomad-minio/releases/tag/0.0.3)
 
 
 ##### a. How To Use The Module and Run It Manually
@@ -266,7 +266,7 @@ This is because there is no code anywhere defining `docker_image`. To define thi
 You can define `docker_image` from within that file like below
 ```hcl-terraform
 module "minio" {
-  source = "github.com/fredrikhgrelland/terraform-nomad-minio.git?ref=0.0.3"
+  source = "github.com/Skatteetaten/terraform-nomad-minio.git?ref=0.0.3"
   docker_image = "minio/minio"
 }
 ```
@@ -304,7 +304,6 @@ variable "use_canary" {
 
 `nomad-job.hcl`
 ```hcl
-...
 update {
   max_parallel      = 1
   health_check      = "checks"
@@ -318,7 +317,6 @@ update {
   %{ endif }
   stagger           = "30s"
 }
-...
 ```
 
 

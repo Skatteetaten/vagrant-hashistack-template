@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.2.0]
+
+## Added
+- `make lint` #105
+- `make fmt`
+- `make destroy-all-running-boxes` added as a fix-all-my-virtualbox-vagrant-problems-now #84
+- Github action "Concurrency"
+- Build docker image and host them on ghcr.io #108
+- Build test images and host them on ghcr.io test_containers.yml
+
+### Changed
+- Fixed links to reflect new repo owner #99
+- New box -> [Skatteetaten/hashistack](https://app.vagrantup.com/Skatteetaten/boxes/hashistack) #103
+- `make precommit` will run `fmt`and `lint`
+- Superlinter update to v4
+- update github actions to mirror v0.11 of box
+- Lint only changed files on Pull Requests
+- Schedule CI/CD Daily at 05:30
+- remove `project` checkbox from issue templates.
+- Testing workflow will not fail fast when a job in the matrix fails
+- Use slim linter
+
+### Fixed
+- Docker authentication #100
+- Improve cleaning of temporary files from build/test procedures
+
 ## [0.1.2]
 
 ### Fixed
@@ -18,7 +44,7 @@
 - Super-linter is run from ghcr.io locally and in github actions
 
 ### Fixed
-- bug where 'make template_init' would crash on End of File error. [#92](https://github.com/fredrikhgrelland/vagrant-hashistack-template/issues/92)
+- bug where 'make template_init' would crash on End of File error. [#92](https://github.com/Skatteetaten/vagrant-hashistack-template/issues/92)
 - Link #94
 - Link #95
 - Some links in documentation [no issue]

@@ -2,20 +2,77 @@ name: CI/CD
 on:
   pull_request:
     branches: [ master ]
-    types: [ opened, synchronize, reopened, edited, closed, labeled, unlabeled ]
-  push:
-    branches: [ master ]
+    types: [ opened, synchronize, reopened, closed, labeled, unlabeled ]
+  schedule:
+    #- cron:  '30 5 * * *' #Daily at 05:30
+    - cron:  '*/15 * * * *' #At every 15th minute.
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  build-and-push-image:
+    needs:
+      - release-prerequisites
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=v${{ needs.release-prerequisites.outputs.next_version }}
+            type=raw,value=latest
+
+      - name: Build and push container image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./docker
+          push: ${{ github.event.action == 'closed' && github.event.pull_request.merged == true }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=docker,dest=/tmp/container-image.tar
+
+      - name: Upload container image
+        uses: actions/upload-artifact@v2
+        with:
+          name: container-image
+          path: /tmp/container-image.tar
+
   linter:
     runs-on: ubuntu-latest
+    if: github.event.action != 'closed'
     steps:
       - uses: actions/checkout@v2
+        with:
+          # Full git history is needed to get a proper list of changed files within `super-linter`
+          fetch-depth: 0
       - name: Super-Linter
-        uses: github/super-linter@v3
+        uses: docker://ghcr.io/github/super-linter:slim-v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_TERRAGRUNT: false
+          VALIDATE_DOCKERFILE: false
+          VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'pull_request' && 'false' || 'true' }}
 
   docker-auth:
     runs-on: ubuntu-latest
@@ -29,23 +86,28 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.action != 'closed' && github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v1
-      - uses: dangoslen/changelog-enforcer@v1.1.1
+      - uses: actions/checkout@v2
+      - uses: dangoslen/changelog-enforcer@v2.3.1
         with:
           changeLogPath: 'CHANGELOG.md'
-          skipLabel: 'skip-changelog'
+          skipLabels: 'ci/skip-changelog'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test:
+    needs:
+      - docker-auth
+      - build-and-push-image
     runs-on: macos-latest
 
     strategy:
+      fail-fast: false
       matrix:
-        consul_acl: [ "consul_acl_enabled", "consul_acl_disabled" ]
-        consul_acl_default_policy: [ "consul_acl_deny" ]
-        nomad_acl: [ "nomad_acl_enabled", "nomad_acl_disabled" ]
-        hashicorp_binary: [ "hashicorp_oss", "hashicorp_enterprise" ]
+        consul_acl: ["consul_acl_enabled", "consul_acl_disabled"]
+        consul_acl_default_policy: ["consul_acl_deny"]
+        nomad_acl: ["nomad_acl_enabled", "nomad_acl_disabled"]
+        hashicorp_binary: ["hashicorp_oss", "hashicorp_enterprise"]
+        master_token: ["master_token_random"]
 
     steps:
       - uses: actions/checkout@v2
@@ -53,11 +115,12 @@ jobs:
       - name: set consul acl (enabled/disabled)
         id: consul_acl
         run: |
+          declare test_consul_acl
           if [ "$test_consul_acl" == 'consul_acl_enabled' ]
           then
-              echo "ENVKEY_consul_acl=true" >> $GITHUB_ENV
+              echo "ENVKEY_consul_acl=true" >> "$GITHUB_ENV"
           else
-              echo "ENVKEY_consul_acl=false" >> $GITHUB_ENV
+              echo "ENVKEY_consul_acl=false" >> "$GITHUB_ENV"
           fi
         env:
           test_consul_acl: ${{ matrix.consul_acl }}
@@ -65,11 +128,12 @@ jobs:
       - name: set consul acl default policy (allow/deny)
         id: consul_acl_default_policy
         run: |
+          declare test_consul_acl_default_policy
           if [ "$test_consul_acl_default_policy" == 'consul_acl_allow' ]
           then
-              echo "ENVKEY_consul_acl_default_policy=allow" >> $GITHUB_ENV
+              echo "ENVKEY_consul_acl_default_policy=allow" >> "$GITHUB_ENV"
           else
-              echo "ENVKEY_consul_acl_default_policy=deny" >> $GITHUB_ENV
+              echo "ENVKEY_consul_acl_default_policy=deny" >> "$GITHUB_ENV"
           fi
         env:
           test_consul_acl_default_policy: ${{ matrix.consul_acl_default_policy }}
@@ -77,11 +141,12 @@ jobs:
       - name: set nomad acl (enabled/disabled)
         id: nomad_acl
         run: |
+          declare test_nomad_acl
           if [ "$test_nomad_acl" == 'nomad_acl_enabled' ]
           then
-              echo "ENVKEY_nomad_acl=true" >> $GITHUB_ENV
+              echo "ENVKEY_nomad_acl=true" >> "$GITHUB_ENV"
           else
-              echo "ENVKEY_nomad_acl=false" >> $GITHUB_ENV
+              echo "ENVKEY_nomad_acl=false" >> "$GITHUB_ENV"
           fi
         env:
           test_nomad_acl: ${{ matrix.nomad_acl }}
@@ -89,37 +154,56 @@ jobs:
       - name: set hashicorp binary (oss/enterprise)
         id: hashicorp_binary
         run: |
+          declare test_hashicorp_binary
           if [ "$test_hashicorp_binary" == 'hashicorp_oss' ]
           then
-              echo "ENVKEY_consul_enterprise=false" >> $GITHUB_ENV
-              echo "ENVKEY_nomad_enterprise=false" >> $GITHUB_ENV
-              echo "ENVKEY_vault_enterprise=false" >> $GITHUB_ENV
+              printf "ENVKEY_consul_enterprise=false\nENVKEY_nomad_enterprise=false\nENVKEY_vault_enterprise=false\n" >> "$GITHUB_ENV"
           else
-              echo "ENVKEY_consul_enterprise=true" >> $GITHUB_ENV
-              echo "ENVKEY_nomad_enterprise=true" >> $GITHUB_ENV
-              echo "ENVKEY_vault_enterprise=true" >> $GITHUB_ENV
+              printf "ENVKEY_consul_enterprise=true\nENVKEY_nomad_enterprise=true\nENVKEY_vault_enterprise=true\n" >> "$GITHUB_ENV"
           fi
         env:
           test_hashicorp_binary: ${{ matrix.hashicorp_binary }}
 
+      - name: set master token (random)
+        id: master_token
+        run: |
+          printf "ENVKEY_nomad_master_token=random\nENVKEY_consul_master_token=random\nENVKEY_vault_master_token=random\n" >> "$GITHUB_ENV"
+        env:
+          test_master_token: ${{ matrix.master_token }}
+
+      #############################
+      ### If Template example   ###
+      #############################
+
       - name: Make .env_override in template_example dir in order to matrix test
-        if: github.repository == 'fredrikhgrelland/vagrant-hashistack-template'
+        if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
         run: python .github/action/create-env.py
         env:
           ENVKEY_env_override: true
           FILE_NAME: template_example/.env_override
 
       - uses: actions/download-artifact@v2
+        if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
         with:
           name: docker-auth
-          path: docker/conf/auth
+          path: template_example/docker/conf/config.json
+
+      - uses: actions/download-artifact@v2
+        if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
+        with:
+          name: container-image
+          path: template_example/dev/tmp/container-image.tar
 
       - name: Run make template_example
-        if: github.repository == 'fredrikhgrelland/vagrant-hashistack-template'
+        if: github.repository == 'Skatteetaten/vagrant-hashistack-template'
         run: make template_example
 
+      #############################
+      ### If cloned template    ###
+      #############################
+
       - name: Make .env_override in template dir in order to matrix test
-        if: github.repository != 'fredrikhgrelland/vagrant-hashistack-template'
+        if: github.repository != 'Skatteetaten/vagrant-hashistack-template'
         run: python .github/action/create-env.py
         env:
           ENVKEY_CONTAINER_REGISTRY_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
@@ -127,34 +211,50 @@ jobs:
           ENVKEY_env_override: true
           FILE_NAME: .env_override
 
+      - uses: actions/download-artifact@v2
+        if: github.repository != 'Skatteetaten/vagrant-hashistack-template'
+        with:
+          name: docker-auth
+          path: docker/conf/config.json
+
+      - uses: actions/download-artifact@v2
+        if: github.repository != 'Skatteetaten/vagrant-hashistack-template'
+        with:
+          name: container-image
+          path: dev/tmp/container-image.tar
+
       - name: Run make test
-        if: github.repository != 'fredrikhgrelland/vagrant-hashistack-template'
+        if: github.repository != 'Skatteetaten/vagrant-hashistack-template'
         run: make test
 
   release-prerequisites:
-    if: |
-      contains(github.event.pull_request.labels.*.name, 'major') ||
-      contains(github.event.pull_request.labels.*.name, 'minor') ||
-      contains(github.event.pull_request.labels.*.name, 'patch')
-    runs-on: macos-latest
+    needs:
+      - enforce-changelog
+      - linter
+    runs-on: ubuntu-latest
     outputs:
       bump: ${{ steps.bump.outputs.match }}
       next_version: ${{ steps.next_version.outputs.version }}
-      log_entry: ${{ steps.changelog_reader.outputs.log_entry }}
-
+      log_entry: ${{ steps.changelog_reader.outputs.changes }}
     steps:
       - uses: actions/checkout@v2
       - name: Require PR label (major/minor/patch)
         id: bump
-        uses: zwaldowski/match-label-action@v1
+        uses: zwaldowski/match-label-action@v2
         with:
-          allowed: major,minor,patch
+          allowed: change/major,change/minor,change/patch
+
+      - uses: rishabhgupta/split-by@v1
+        id: split
+        with:
+          string: ${{ steps.bump.outputs.match }}
+          split-by: '/'
 
       - id: next_version
-        uses: zwaldowski/semver-release-action@v1
+        uses: zwaldowski/semver-release-action@v2
         with:
           dry_run: true
-          bump: ${{ steps.bump.outputs.match }}
+          bump: ${{ steps.split.outputs._1 }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Find and replace
@@ -166,19 +266,22 @@ jobs:
 
       - name: Get Changelog Entry
         id: changelog_reader
-        uses: mindsers/changelog-reader-action@v1.1.0
+        uses: mindsers/changelog-reader-action@v2.0.0
         with:
           version: ${{ steps.next_version.outputs.version }}
-          path: CHANGELOG.md
+          path: ./CHANGELOG.md
 
   release:
-    if: github.event.action == 'closed' && github.event.pull_request.merged == true
+    if: >-
+      github.event.action == 'closed'
+      && github.event.pull_request.merged == true
+      && contains( github.event.pull_request.labels.*.name , 'ci/release')
     needs:
       - release-prerequisites
       - test
-
     runs-on: macos-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Create Release on github
         id: create_release
         uses: actions/create-release@v1
