@@ -25,6 +25,7 @@
 ### Fixed
 - Docker authentication #100
 - Improve cleaning of temporary files from build/test procedures
+- `make template_init` produces valid CHANGELOG.md
 
 ## [0.1.2]
 
